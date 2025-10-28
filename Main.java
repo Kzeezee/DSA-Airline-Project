@@ -4,11 +4,14 @@ import java.io.IOException;
 import java.io.StringReader;
 import java.util.*;
 
+import javax.xml.crypto.dsig.keyinfo.KeyValue;
+
 import org.apache.lucene.analysis.Analyzer;
 import org.apache.lucene.analysis.TokenStream;
 import org.apache.lucene.analysis.en.EnglishAnalyzer;
 import org.apache.lucene.analysis.standard.StandardAnalyzer;
 import org.apache.lucene.analysis.tokenattributes.CharTermAttribute;
+import org.slf4j.event.KeyValuePair;
 import org.apache.lucene.analysis.en.PorterStemFilter;
 
 /*
@@ -85,8 +88,18 @@ public class Main {
         }
         
         // Now we have a list of AirlineReviews with the important information + Tokenized stemmed and stopped words removed Review
+        // We now set it to a HashMap where key is the airline, and the value is a list of the tokenized
+        // AirlineReview class. We do this as our problem is frequency of words for a specific airline,
+        // hence it okay to assume we have the reviews sorted for a specific airlines
+        HashMap<String, List<AirlineReview>> airlineReviews = new HashMap<>();
         for (AirlineReview airlineReview : tokenizedReviews) {
-            System.out.println(airlineReview);
+            if (!airlineReviews.containsKey(airlineReview.getAirline())) {
+                airlineReviews.put(airlineReview.getAirline(), new ArrayList<>());
+            }
+            airlineReviews.get(airlineReview.getAirline()).add(airlineReview);
         }
+
+        // Now we have a hashmap of all tokenized airlinereviews class belonging to a specific airline
+        System.out.println(airlineReviews);
     }
 }
