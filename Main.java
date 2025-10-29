@@ -23,6 +23,19 @@ import org.apache.lucene.analysis.en.PorterStemFilter;
  */
 
 public class Main {
+    public static void arrayListImplementationTest(HashMap<String, List<AirlineReview>> airlineReviews, String airline) {
+        AirlineArrayListImpl airlineArrayListImpl = new AirlineArrayListImpl(airlineReviews, "\"" + airline + "\"");
+        Pair<ArrayList<WordCount>, ArrayList<WordCount>> top10MostCommonWords = airlineArrayListImpl.getTop10MostCommonWords();
+        System.out.println("Top 10 most common words in good reviews: ");
+        for (WordCount wc : top10MostCommonWords.getLeft()) {
+            System.out.println(wc);
+        }
+        System.out.println("Top 10 most common words in bad reviews: ");
+        for (WordCount wc : top10MostCommonWords.getRight()) {
+            System.out.println(wc);
+        }
+    }
+
     public static void main(String[] args) throws IOException {
         List<String[]> records = new ArrayList<>();
 
@@ -100,6 +113,7 @@ public class Main {
         }
 
         // Now we have a hashmap of all tokenized airlinereviews class belonging to a specific airline
-        System.out.println(airlineReviews);
+        // System.out.println(airlineReviews);
+        arrayListImplementationTest(airlineReviews, "spirit-airlines");
     }
 }
