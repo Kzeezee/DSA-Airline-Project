@@ -119,16 +119,6 @@ public class AirlineArrayListImpl {
         }
         return result;
     }
-    /**
-     * Get ArrayList of AirlineReviews for a specific airline
-     * From that, make two ArrayLists of "Good" and "Bad" reviews
-     * Have a method that finds the top 10 most common words in those two ArrayLists
-     * Return the top 10 most common words in the Good ArrayList 
-     * and the top 10 most common words in the Bad ArrayList
-     * If a word has the around the same frequency in both ArrayLists, then it should be nullified, 
-     * as this is likely a common word that is used in both good and bad reviews, rather than an indicator of a good or bad review.
-     * Show how frequent each word appears, what the word is, and the percentage of the word in the ArrayList
-    */
 }
 
 class WordCount {
