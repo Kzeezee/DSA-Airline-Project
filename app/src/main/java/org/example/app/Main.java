@@ -20,20 +20,10 @@ import com.opencsv.exceptions.CsvException;
 import org.example.AirlineBSTImpl;
 import org.example.ds.arraylist.AirlineArrayListImpl;
 import org.example.model.AirlineReview;
-import org.example.util.Pair;
-import org.example.util.TextAnalysisUtils;
-import org.example.util.WordCount;
+import org.example.model.util.Pair;
+import org.example.model.util.TextAnalysisUtils;
+import org.example.model.util.WordCount;
 
-/*
- * BST Implementation Branch
- * Testing Binary Search Tree approach for word frequency analysis
- * 
- * Index mappings from CSV:
- * Index 0  - Airlines
- * Index 6  - Review content
- * Index 11 - Overall rating
- * Index 19 - Recommended
- */
 
 public class Main {
     public static Set<String> uselessWord = Set.of("i", "you", "we", "my", "were", "have", "had", "us", "our");
