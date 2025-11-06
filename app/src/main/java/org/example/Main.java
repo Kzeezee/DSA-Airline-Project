@@ -78,7 +78,7 @@ public class Main {
         List<AirlineReview> reviews = airlineReviews.get(airline);
         int positiveCount = 0;
         int negativeCount = 0;
-        
+
         if (reviews != null) {
             for (AirlineReview review : reviews) {
                 if (TextAnalysisUtils.isPositiveRecommendation(review.getRecommended())) {
@@ -88,7 +88,7 @@ public class Main {
                 }
             }
         }
-        
+
         int totalReviews = positiveCount + negativeCount;
         double positivePercent = totalReviews > 0 ? (positiveCount * 100.0 / totalReviews) : 0;
         double negativePercent = totalReviews > 0 ? (negativeCount * 100.0 / totalReviews) : 0;
@@ -114,7 +114,7 @@ public class Main {
         System.out.printf("Total Reviews: %d\n", totalReviews);
         System.out.printf("Positive Reviews: %d (%.1f%%)\n", positiveCount, positivePercent);
         System.out.printf("Negative Reviews: %d (%.1f%%)\n", negativeCount, negativePercent);
-        
+
         System.out.println("\n----------------------------------------");
         if (positiveCount > negativeCount) {
             System.out.println("VERDICT: MOSTLY POSITIVE");

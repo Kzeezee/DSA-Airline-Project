@@ -27,7 +27,7 @@ public class WordCount {
 
     @Override
     public String toString() {
-        return String.format("Word: %-15s Count: %5d  (%.2f%%)", 
-            word, count, getPercent() * 100);
+        return String.format("Word: %-15s Count: %5d  (%.2f%%)",
+                word, count, getPercent() * 100);
     }
 }
