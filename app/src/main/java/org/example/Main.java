@@ -141,21 +141,22 @@ public class Main {
             String line = br.readLine(); // Skip header
             StringBuilder currentLine = new StringBuilder();
             boolean inQuotes = false;
-            
+
             while ((line = br.readLine()) != null) {
                 currentLine.append(line);
-                
+
                 // Check if we're inside a quoted field
                 for (char c : line.toCharArray()) {
-                    if (c == '"') inQuotes = !inQuotes;
+                    if (c == '"')
+                        inQuotes = !inQuotes;
                 }
-                
+
                 // If still in quotes, this is a multi-line field
                 if (inQuotes) {
                     currentLine.append("\n");
                     continue;
                 }
-                
+
                 // Parse the complete line
                 String[] row = parseCSVLine(currentLine.toString());
                 String[] selectedValues = new String[4];
