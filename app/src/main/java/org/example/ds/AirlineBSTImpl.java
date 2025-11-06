@@ -3,13 +3,14 @@ package org.example.ds;
 import java.util.List;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.PriorityQueue;
 
 import org.example.model.AirlineReview;
 import org.example.model.util.Pair;
 import org.example.model.util.TextAnalysisUtils;
 import org.example.model.util.WordCount;
 
-public class AirlineBSTImpl {
+public class AirlineBSTImpl implements WordFrequencyAnalyzer {
     private HashMap<String, List<AirlineReview>> airlineReviews;
     private String airline;
 
@@ -45,24 +46,14 @@ public class AirlineBSTImpl {
             }
         }
 
-        // Get top 10 directly from BSTs using BST-specific method
-        List<WordCount> topGood = topKFromBST(goodBST, goodTotal, 10);
-        List<WordCount> topBad = topKFromBST(badBST, badTotal, 10);
+        // Get top 10 directly from BSTs using heap-based traversal (no ArrayList build)
+        List<WordCount> topGood = goodBST.topK(goodTotal, 10);
+        List<WordCount> topBad = badBST.topK(badTotal, 10);
 
         return Pair.of(topGood, topBad);
     }
 
-    // BST-specific Top-K: traverse BST to list, sort by count desc, take first k
-    private List<WordCount> topKFromBST(WordFrequencyBST bst, int totalWords, int k) {
-        List<WordCount> counts = bst.toWordCountList(totalWords);
-        counts.sort((a, b) -> Integer.compare(b.getCount(), a.getCount()));
-        int limit = Math.min(k, counts.size());
-        ArrayList<WordCount> result = new ArrayList<>(limit);
-        for (int i = 0; i < limit; i++) {
-            result.add(counts.get(i));
-        }
-        return result;
-    }
+    // Top-K moved into WordFrequencyBST to avoid materializing full list
 
     // Inner class: BST Node
     private static class BSTNode {
@@ -110,20 +101,26 @@ public class AirlineBSTImpl {
             return node;
         }
 
-        // In-order traversal to get sorted list of WordCount objects
-        public List<WordCount> toWordCountList(int totalWords) {
-            List<WordCount> result = new ArrayList<>();
-            inOrderTraversal(root, result, totalWords);
+        // Heap-based Top-K without building a full list
+        public List<WordCount> topK(int totalWords, int k) {
+            PriorityQueue<WordCount> minHeap = new PriorityQueue<>(k, (a, b) -> Integer.compare(a.getCount(), b.getCount()));
+            inOrderCollectTopK(root, minHeap, totalWords, k);
+            ArrayList<WordCount> result = new ArrayList<>(minHeap);
+            result.sort((a, b) -> Integer.compare(b.getCount(), a.getCount()));
             return result;
         }
 
-        private void inOrderTraversal(BSTNode node, List<WordCount> result, int totalWords) {
-            if (node == null) {
-                return;
+        private void inOrderCollectTopK(BSTNode node, PriorityQueue<WordCount> heap, int totalWords, int k) {
+            if (node == null) return;
+            inOrderCollectTopK(node.left, heap, totalWords, k);
+            WordCount wc = new WordCount(node.word, node.count, totalWords);
+            if (heap.size() < k) {
+                heap.offer(wc);
+            } else if (!heap.isEmpty() && wc.getCount() > heap.peek().getCount()) {
+                heap.poll();
+                heap.offer(wc);
             }
-            inOrderTraversal(node.left, result, totalWords);
-            result.add(new WordCount(node.word, node.count, totalWords));
-            inOrderTraversal(node.right, result, totalWords);
+            inOrderCollectTopK(node.right, heap, totalWords, k);
         }
     }
 }

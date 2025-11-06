@@ -14,15 +14,13 @@ import org.apache.lucene.analysis.standard.StandardAnalyzer;
 import org.apache.lucene.analysis.tokenattributes.CharTermAttribute;
 import org.apache.lucene.analysis.en.PorterStemFilter;
 
-
-import org.example.WordFrequencyCounter;
 import org.example.ds.AirlineArrayListImpl;
 import org.example.ds.AirlineBSTImpl;
 import org.example.ds.AirlineRBTreeImpl;
 import org.example.ds.AirlineMapImpl;
+import org.example.ds.WordFrequencyAnalyzer;
 import org.example.model.AirlineReview;
 import org.example.model.util.Pair;
-import org.example.model.util.TextAnalysisUtils;
 import org.example.model.util.WordCount;
 
 /*
@@ -67,265 +65,28 @@ public class Main {
         return result.toArray(new String[0]);
     }
 
-    /**
-     * Test BST implementation for word frequency counting
-     */
-    public static void bstImplementationTest(HashMap<String, List<AirlineReview>> airlineReviews, String airline) {
+    private static void runAnalyzer(String title, WordFrequencyAnalyzer analyzer) {
         System.out.println("\n========================================");
-        System.out.println("      BST Implementation Test");
+        System.out.println("      " + title + " Implementation Test");
         System.out.println("========================================");
 
-        AirlineBSTImpl airlineBSTImpl = new AirlineBSTImpl(airlineReviews, airline);
-        Pair<List<WordCount>, List<WordCount>> top10MostCommonWords = airlineBSTImpl.getTop10MostCommonWords();
-
-        // Count positive vs negative reviews
-        List<AirlineReview> reviews = airlineReviews.get(airline);
-        int positiveCount = 0;
-        int negativeCount = 0;
-
-        if (reviews != null) {
-            for (AirlineReview review : reviews) {
-                if (TextAnalysisUtils.isPositiveRecommendation(review.getRecommended())) {
-                    positiveCount++;
-                } else {
-                    negativeCount++;
-                }
-            }
-        }
-
-        int totalReviews = positiveCount + negativeCount;
-        double positivePercent = totalReviews > 0 ? (positiveCount * 100.0 / totalReviews) : 0;
-        double negativePercent = totalReviews > 0 ? (negativeCount * 100.0 / totalReviews) : 0;
+        Pair<List<WordCount>, List<WordCount>> top10 = analyzer.getTop10MostCommonWords();
 
         System.out.println("\n[GOOD] Top 10 most common words in POSITIVE reviews:");
         System.out.println("-----------------------------------------");
         int goodRank = 1;
-        for (WordCount wc : top10MostCommonWords.getLeft()) {
-            System.out.printf("%2d. %s\n", goodRank++, wc);
+        for (WordCount wc : top10.getLeft()) {
+            System.out.printf("%2d. Word: %-15s Count: %5d\n",
+                    goodRank++, wc.getWord(), wc.getCount());
         }
 
         System.out.println("\n[BAD] Top 10 most common words in NEGATIVE reviews:");
         System.out.println("-----------------------------------------");
         int badRank = 1;
-        for (WordCount wc : top10MostCommonWords.getRight()) {
-            System.out.printf("%2d. %s\n", badRank++, wc);
+        for (WordCount wc : top10.getRight()) {
+            System.out.printf("%2d. Word: %-15s Count: %5d\n",
+                    badRank++, wc.getWord(), wc.getCount());
         }
-
-        // Overall sentiment analysis
-        System.out.println("\n========================================");
-        System.out.println("      Overall Sentiment Analysis");
-        System.out.println("========================================");
-        System.out.printf("Total Reviews: %d\n", totalReviews);
-        System.out.printf("Positive Reviews: %d (%.1f%%)\n", positiveCount, positivePercent);
-        System.out.printf("Negative Reviews: %d (%.1f%%)\n", negativeCount, negativePercent);
-
-        System.out.println("\n----------------------------------------");
-        if (positiveCount > negativeCount) {
-            System.out.println("VERDICT: MOSTLY POSITIVE");
-            System.out.printf("Customers generally recommend this airline!\n");
-        } else if (negativeCount > positiveCount) {
-            System.out.println("VERDICT: MOSTLY NEGATIVE");
-            System.out.printf("Customers generally do NOT recommend this airline.\n");
-        } else {
-            System.out.println("VERDICT: MIXED");
-            System.out.printf("Reviews are evenly split.\n");
-        }
-        System.out.println("----------------------------------------");
-    }
-
-    /**
-     * Test Red-Black Tree implementation for word frequency counting
-     */
-    public static void redBlackTreeImplementationTest(HashMap<String, List<AirlineReview>> airlineReviews, String airline) {
-        System.out.println("\n========================================");
-        System.out.println("      Red-Black Tree Implementation Test");
-        System.out.println("========================================");
-
-        AirlineRBTreeImpl airlineRBTreeImpl = new AirlineRBTreeImpl(airlineReviews, airline);
-        Pair<List<WordCount>, List<WordCount>> top10MostCommonWords = airlineRBTreeImpl.getTop10MostCommonWords();
-
-        // Count positive vs negative reviews
-        List<AirlineReview> reviews = airlineReviews.get(airline);
-        int positiveCount = 0;
-        int negativeCount = 0;
-
-        if (reviews != null) {
-            for (AirlineReview review : reviews) {
-                if (TextAnalysisUtils.isPositiveRecommendation(review.getRecommended())) {
-                    positiveCount++;
-                } else {
-                    negativeCount++;
-                }
-            }
-        }
-
-        int totalReviews = positiveCount + negativeCount;
-        double positivePercent = totalReviews > 0 ? (positiveCount * 100.0 / totalReviews) : 0;
-        double negativePercent = totalReviews > 0 ? (negativeCount * 100.0 / totalReviews) : 0;
-
-        // Display results
-        System.out.println("\n[GOOD] Top 10 most common words in POSITIVE reviews:");
-        System.out.println("-".repeat(41));
-        int i = 1;
-        for (WordCount wc : top10MostCommonWords.getLeft()) {
-            System.out.printf("%2d. %s%n", i++, wc);
-        }
-
-        System.out.println("\n[BAD] Top 10 most common words in NEGATIVE reviews:");
-        System.out.println("-".repeat(41));
-        i = 1;
-        for (WordCount wc : top10MostCommonWords.getRight()) {
-            System.out.printf("%2d. %s%n", i++, wc);
-        }
-
-        // Display sentiment analysis
-        System.out.println("\n========================================");
-        System.out.println("      Overall Sentiment Analysis");
-        System.out.println("========================================");
-        System.out.println("Total Reviews: " + totalReviews);
-        System.out.printf("Positive Reviews: %d (%.1f%%)%n", positiveCount, positivePercent);
-        System.out.printf("Negative Reviews: %d (%.1f%%)%n", negativeCount, negativePercent);
-
-        // Verdict
-        System.out.println("\n" + "-".repeat(40));
-        if (positiveCount > negativeCount) {
-            System.out.println("VERDICT: MOSTLY POSITIVE");
-            System.out.printf("Customers generally recommend this airline.\n");
-        } else if (negativeCount > positiveCount) {
-            System.out.println("VERDICT: MOSTLY NEGATIVE");
-            System.out.printf("Customers generally do NOT recommend this airline.\n");
-        } else {
-            System.out.println("VERDICT: MIXED");
-            System.out.printf("Reviews are evenly split.\n");
-        }
-        System.out.println("----------------------------------------");
-    }
-
-    /**
-     * Test ArrayList implementation for word frequency counting
-     */
-    public static void arrayListImplementationTest(HashMap<String, List<AirlineReview>> airlineReviews,
-            String airline) {
-        System.out.println("\n========================================");
-        System.out.println("      ArrayList Implementation Test");
-        System.out.println("========================================");
-
-        AirlineArrayListImpl airlineArrayListImpl = new AirlineArrayListImpl(airlineReviews, airline);
-        Pair<List<WordCount>, List<WordCount>> top10MostCommonWords = airlineArrayListImpl.getTop10MostCommonWords();
-
-        // Count positive vs negative reviews
-        List<AirlineReview> reviews = airlineReviews.get(airline);
-        int positiveCount = 0;
-        int negativeCount = 0;
-
-        if (reviews != null) {
-            for (AirlineReview review : reviews) {
-                if (TextAnalysisUtils.isPositiveRecommendation(review.getRecommended())) {
-                    positiveCount++;
-                } else {
-                    negativeCount++;
-                }
-            }
-        }
-
-        int totalReviews = positiveCount + negativeCount;
-        double positivePercent = totalReviews > 0 ? (positiveCount * 100.0 / totalReviews) : 0;
-        double negativePercent = totalReviews > 0 ? (negativeCount * 100.0 / totalReviews) : 0;
-
-        System.out.println("\n[GOOD] Top 10 most common words in POSITIVE reviews:");
-        System.out.println("-----------------------------------------");
-        int goodRank = 1;
-        for (WordCount wc : top10MostCommonWords.getLeft()) {
-            System.out.printf("%2d. %s\n", goodRank++, wc);
-        }
-
-        System.out.println("\n[BAD] Top 10 most common words in NEGATIVE reviews:");
-        System.out.println("-----------------------------------------");
-        int badRank = 1;
-        for (WordCount wc : top10MostCommonWords.getRight()) {
-            System.out.printf("%2d. %s\n", badRank++, wc);
-        }
-
-        // Overall sentiment analysis
-        System.out.println("\n========================================");
-        System.out.println("      Overall Sentiment Analysis");
-        System.out.println("========================================");
-        System.out.printf("Total Reviews: %d\n", totalReviews);
-        System.out.printf("Positive Reviews: %d (%.1f%%)\n", positiveCount, positivePercent);
-        System.out.printf("Negative Reviews: %d (%.1f%%)\n", negativeCount, negativePercent);
-
-        System.out.println("\n----------------------------------------");
-        if (positiveCount > negativeCount) {
-            System.out.println("VERDICT: MOSTLY POSITIVE");
-            System.out.printf("Customers generally recommend this airline!\n");
-        } else if (negativeCount > positiveCount) {
-            System.out.println("VERDICT: MOSTLY NEGATIVE");
-            System.out.printf("Customers generally do NOT recommend this airline.\n");
-        } else {
-            System.out.println("VERDICT: MIXED");
-            System.out.printf("Reviews are evenly split.\n");
-        }
-        System.out.println("----------------------------------------");
-    }
-
-    /**
-     * Test Priority Queue implementation for word frequency counting
-     */
-    public static void priorityQueueImplementationTest(HashMap<String, List<AirlineReview>> airlineReviews,
-            List<AirlineReview> tokenizedReviews,
-            String airline) {
-        System.out.println("\n========================================");
-        System.out.println("      Priority Queue Implementation Test");
-        System.out.println("========================================");
-
-        // Use WordFrequencyCounter to analyze this specific airline
-        WordFrequencyCounter.AirlineAnalysis analysis = WordFrequencyCounter.analyzeAirline(airline, tokenizedReviews,
-                10);
-
-        int totalReviews = analysis.totalReviews;
-        int positiveCount = analysis.goodReviews;
-        int negativeCount = analysis.badReviews;
-        double positivePercent = totalReviews > 0 ? (positiveCount * 100.0 / totalReviews) : 0;
-        double negativePercent = totalReviews > 0 ? (negativeCount * 100.0 / totalReviews) : 0;
-
-        System.out.println("\n[GOOD] Top 10 most common words in POSITIVE reviews:");
-        System.out.println("-----------------------------------------");
-        int goodRank = 1;
-        for (Map.Entry<String, Integer> entry : analysis.topGoodWords) {
-            double percent = positiveCount > 0 ? (entry.getValue() * 100.0 / positiveCount) : 0;
-            System.out.printf("%2d. Word: %-15s Count: %5d  (%.2f%%)\n",
-                    goodRank++, entry.getKey(), entry.getValue(), percent);
-        }
-
-        System.out.println("\n[BAD] Top 10 most common words in NEGATIVE reviews:");
-        System.out.println("-----------------------------------------");
-        int badRank = 1;
-        for (Map.Entry<String, Integer> entry : analysis.topBadWords) {
-            double percent = negativeCount > 0 ? (entry.getValue() * 100.0 / negativeCount) : 0;
-            System.out.printf("%2d. Word: %-15s Count: %5d  (%.2f%%)\n",
-                    badRank++, entry.getKey(), entry.getValue(), percent);
-        }
-
-        // Overall sentiment analysis
-        System.out.println("\n========================================");
-        System.out.println("      Overall Sentiment Analysis");
-        System.out.println("========================================");
-        System.out.printf("Total Reviews: %d\n", totalReviews);
-        System.out.printf("Positive Reviews: %d (%.1f%%)\n", positiveCount, positivePercent);
-        System.out.printf("Negative Reviews: %d (%.1f%%)\n", negativeCount, negativePercent);
-
-        System.out.println("\n----------------------------------------");
-        if (positiveCount > negativeCount) {
-            System.out.println("VERDICT: MOSTLY POSITIVE");
-            System.out.printf("Customers generally recommend this airline!\n");
-        } else if (negativeCount > positiveCount) {
-            System.out.println("VERDICT: MOSTLY NEGATIVE");
-            System.out.printf("Customers generally do NOT recommend this airline.\n");
-        } else {
-            System.out.println("VERDICT: MIXED");
-            System.out.printf("Reviews are evenly split.\n");
-        }
-        System.out.println("----------------------------------------");
     }
 
     public static void main(String[] args) throws IOException {
@@ -425,199 +186,11 @@ public class Main {
             airlineReviews.get(airlineReview.getAirline()).add(airlineReview);
         }
 
-        // ========== BST IMPLEMENTATION ANALYSIS ==========
+        // Unified test harness for all 4 implementations
         String testAirline = "spirit-airlines";
-        System.out.println("\n" + "=".repeat(70));
-        System.out.println("  BST IMPLEMENTATION - AIRLINE ANALYSIS");
-        System.out.println("  Data Structure: Binary Search Tree | Complexity: O(N log N)");
-        System.out.println("=".repeat(70));
-        System.out.println("  Analyzing: " + testAirline);
-        System.out.println("=".repeat(70));
-
-        bstImplementationTest(airlineReviews, testAirline);
-
-        System.out.println("\n========================================");
-        System.out.println("      BST Implementation Summary");
-        System.out.println("========================================");
-        System.out.println("* Uses Binary Search Tree for counting");
-        System.out.println("* Automatically maintains alphabetical order");
-        System.out.println("* Counts word occurrences during insertion");
-        System.out.println("* More memory efficient (stores unique words only)");
-        System.out.println("\nInsight: Top words reveal what passengers love/hate!");
-
-        // ========== RED-BLACK TREE IMPLEMENTATION ANALYSIS ==========
-        System.out.println("\n\n" + "=".repeat(70));
-        System.out.println("  RED-BLACK TREE IMPLEMENTATION - AIRLINE ANALYSIS");
-        System.out.println("  Data Structure: Red-Black Tree (Self-Balancing BST) | Complexity: O(N log N)");
-        System.out.println("=".repeat(70));
-        System.out.println("  Analyzing: " + testAirline);
-        System.out.println("=".repeat(70));
-
-        redBlackTreeImplementationTest(airlineReviews, testAirline);
-
-        System.out.println("\n========================================");
-        System.out.println("      Red-Black Tree Implementation Summary");
-        System.out.println("========================================");
-        System.out.println("* Uses Red-Black Tree for self-balancing word counting");
-        System.out.println("* Guarantees O(log N) operations through color-based balancing");
-        System.out.println("* Prevents worst-case O(N) behavior of unbalanced BST");
-        System.out.println("* Maintains order while ensuring balanced height");
-        System.out.println("\nInsight: RBT combines BST benefits with guaranteed performance!");
-
-        // ========== ARRAYLIST IMPLEMENTATION ANALYSIS ==========
-        System.out.println("\n\n" + "=".repeat(70));
-        System.out.println("  ARRAYLIST IMPLEMENTATION - AIRLINE ANALYSIS");
-        System.out.println("  Data Structure: ArrayList (Dynamic Array) | Complexity: O(N log N)");
-        System.out.println("=".repeat(70));
-        System.out.println("  Analyzing: " + testAirline);
-        System.out.println("=".repeat(70));
-
-        arrayListImplementationTest(airlineReviews, testAirline);
-
-        System.out.println("\n========================================");
-        System.out.println("      ArrayList Implementation Summary");
-        System.out.println("========================================");
-        System.out.println("* Uses ArrayList for storing and sorting words");
-        System.out.println("* Efficient for sequential access and iteration");
-        System.out.println("* Sorting-based approach for word frequency");
-        System.out.println("* Simple and straightforward implementation");
-        System.out.println("\nInsight: ArrayList provides flexible word frequency analysis!");
-
-        // ========== MAP (HASHMAP) IMPLEMENTATION ANALYSIS ==========
-
-        // Display section header and information
-        System.out.println("\n\n" + "=".repeat(70));
-        System.out.println("  MAP IMPLEMENTATION - AIRLINE ANALYSIS");
-        System.out.println("  Data Structure: Map (HashMap) | Complexity: O(N log N)");
-        System.out.println("=".repeat(70));
-        System.out.println("  Analyzing: " + testAirline);
-        System.out.println("=".repeat(70));
-
-        // Run test using Map-based implementation (instance API)
-        AirlineMapImpl mapImpl = new AirlineMapImpl(airlineReviews, testAirline);
-        Pair<List<WordCount>, List<WordCount>> mapTop10 = mapImpl.getTop10MostCommonWords();
-
-        System.out.println("\n[GOOD] Top 10 most common words in POSITIVE reviews:");
-        System.out.println("-----------------------------------------");
-        int mapGoodRank = 1;
-        for (WordCount wc : mapTop10.getLeft()) {
-            System.out.printf("%2d. %s\n", mapGoodRank++, wc);
-        }
-
-        System.out.println("\n[BAD] Top 10 most common words in NEGATIVE reviews:");
-        System.out.println("-----------------------------------------");
-        int mapBadRank = 1;
-        for (WordCount wc : mapTop10.getRight()) {
-            System.out.printf("%2d. %s\n", mapBadRank++, wc);
-        }
-
-        // Summary of current implementation
-        System.out.println("\n========================================");
-        System.out.println("      Map Implementation Summary");
-        System.out.println("========================================");
-        System.out.println("* Stores and processes word data using a HashMap structure");
-        System.out.println("* Optimizes for quick lookup and updates of frequencies");
-        System.out.println("* Sorting step uses Map entries for frequency analysis");
-        System.out.println("* Implementation is direct and efficient for large datasets");
-        System.out.println("\nInsight: Maps are preferred for fast lookups.");
-
-        // ========== PRIORITY QUEUE IMPLEMENTATION ANALYSIS ==========
-        System.out.println("\n\n" + "=".repeat(70));
-        System.out.println("  PRIORITY QUEUE IMPLEMENTATION - AIRLINE ANALYSIS");
-        System.out.println("  Data Structure: PriorityQueue (Min-Heap) | Complexity: O(N log K)");
-        System.out.println("=".repeat(70));
-        System.out.println("  Analyzing: " + testAirline);
-        System.out.println("=".repeat(70));
-
-        priorityQueueImplementationTest(airlineReviews, tokenizedReviews, testAirline);
-
-        System.out.println("\n========================================");
-        System.out.println("      Priority Queue Implementation Summary");
-        System.out.println("========================================");
-        System.out.println("* Uses PriorityQueue (Min-Heap) for top-K word selection");
-        System.out.println("* Most efficient for finding top K elements");
-        System.out.println("* O(N log K) complexity - optimal for top-K problem");
-        System.out.println("* Automatically maintains top words while processing");
-        System.out.println("\nInsight: Priority Queue is optimized for top-K word frequency!");
-
-        // ========== COMPREHENSIVE ANALYSIS (All Airlines) ==========
-        // System.out.println("\n\n" + "=".repeat(70));
-        // System.out.println(" COMPREHENSIVE ANALYSIS - ALL AIRLINES");
-        // System.out.println(" Using Priority Queue for Multi-Airline Comparison");
-        // System.out.println("=".repeat(70));
-
-        // System.out.println("\nDataset Statistics:");
-        // System.out.println("-".repeat(50));
-        // System.out.println("Total Reviews Analyzed: " + tokenizedReviews.size());
-        // System.out.println("Total Unique Airlines: " + airlineReviews.size());
-
-        // // Count overall good/bad for context
-        // int totalGood = 0, totalBad = 0;
-        // for (AirlineReview review : tokenizedReviews) {
-        // if ("1".equals(review.getRecommended()))
-        // totalGood++;
-        // else if ("0".equals(review.getRecommended()))
-        // totalBad++;
-        // }
-        // System.out.println("Overall Good Reviews: " + totalGood);
-        // System.out.println("Overall Bad Reviews: " + totalBad);
-        // System.out.printf("Overall Recommendation Rate: %.1f%%\n", (totalGood *
-        // 100.0) / tokenizedReviews.size());
-
-        // // Airline-specific analysis using Priority Queue
-        // analyzeSpecificAirlines(airlineReviews, tokenizedReviews);
+        runAnalyzer("BST", new AirlineBSTImpl(airlineReviews, testAirline));
+        runAnalyzer("Red-Black Tree", new AirlineRBTreeImpl(airlineReviews, testAirline));
+        runAnalyzer("ArrayList", new AirlineArrayListImpl(airlineReviews, testAirline));
+        runAnalyzer("Map", new AirlineMapImpl(airlineReviews, testAirline));
     }
-
-    /**
-     * Separate method for airline-specific analysis using Priority Queue
-     * This keeps the overall analysis and specific airline analysis separate
-     */
-    // private static void analyzeSpecificAirlines(HashMap<String,
-    // List<AirlineReview>> airlineReviews,
-    // List<AirlineReview> tokenizedReviews) {
-    // System.out.println("\n\n" + "=".repeat(70));
-    // System.out.println("AIRLINE-SPECIFIC ANALYSIS MODULE");
-    // System.out.println("Using Priority Queue for Per-Airline Word Frequency");
-    // System.out.println("=".repeat(70));
-
-    // // Find best and worst airlines
-    // WordFrequencyCounter.findBestAndWorst(airlineReviews, tokenizedReviews);
-
-    // // Detailed analysis of top airlines by review count
-    // System.out.println("\n\n" + "=".repeat(70));
-    // System.out.println("DETAILED ANALYSIS - TOP AIRLINES BY REVIEW COUNT");
-    // System.out.println("=".repeat(70));
-
-    // // Get list of unique airlines and sort by number of reviews
-    // List<Map.Entry<String, List<AirlineReview>>> sortedAirlines = new
-    // ArrayList<>(airlineReviews.entrySet());
-    // sortedAirlines.sort((a, b) -> b.getValue().size() - a.getValue().size());
-
-    // // Analyze top 5 airlines with most reviews
-    // System.out.println("\nAnalyzing top 5 airlines with most reviews...\n");
-    // List<WordFrequencyCounter.AirlineAnalysis> analyses = new ArrayList<>();
-
-    // int count = 0;
-    // for (Map.Entry<String, List<AirlineReview>> entry : sortedAirlines) {
-    // if (count >= 5)
-    // break;
-
-    // String airline = entry.getKey();
-    // WordFrequencyCounter.AirlineAnalysis analysis =
-    // WordFrequencyCounter.analyzeAirline(airline,
-    // tokenizedReviews, 10);
-
-    // analyses.add(analysis);
-    // WordFrequencyCounter.printAirlineAnalysis(analysis);
-    // count++;
-    // }
-
-    // // Print comparison table
-    // WordFrequencyCounter.compareAirlines(analyses);
-
-    // System.out.println("\n" + "=".repeat(70));
-    // System.out.println("Airline-specific analysis complete!");
-    // System.out.println("=".repeat(70) + "\n");
-    // }
-
 }

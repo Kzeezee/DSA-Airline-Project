@@ -14,7 +14,7 @@ import org.example.model.AirlineReview;
 import org.example.model.util.Pair;
 import org.example.model.util.WordCount;
 
-public class AirlineMapImpl {
+public class AirlineMapImpl implements WordFrequencyAnalyzer {
     private Map<String, List<AirlineReview>> airlineReviews;
     private String airline;
 

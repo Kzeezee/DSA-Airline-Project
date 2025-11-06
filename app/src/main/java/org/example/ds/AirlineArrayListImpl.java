@@ -9,7 +9,7 @@ import org.example.model.util.Pair;
 import org.example.model.util.TextAnalysisUtils;
 import org.example.model.util.WordCount;
 
-public class AirlineArrayListImpl {
+public class AirlineArrayListImpl implements WordFrequencyAnalyzer {
     private HashMap<String, List<AirlineReview>> airlineReviews;
     private String airline;
 
