@@ -37,6 +37,24 @@ public class Main {
             "us", "our", "so", "from");
 
     /**
+     * Words to exclude from interactive comparison - too generic/meaningless as
+     * comparison attributes
+     */
+    private static final Set<String> EXCLUDED_COMPARISON_WORDS = Set.of(
+            "veri", "very", // Too generic
+            "all", // Too generic
+            "class", // Ambiguous (class of service vs. word "class")
+            "return", // Ambiguous (return flight vs. verb)
+            "check", // Too generic (check-in, check baggage, etc.)
+            "board", // Too generic
+            "which", // Grammatical word
+            "when", // Grammatical word
+            "would", // Grammatical word
+            "on", // Preposition
+            "get" // Too generic
+    );
+
+    /**
      * Common stem to readable word mapping for better display
      * Only maps the most common/confusing stems that appear in top 20
      */
@@ -79,6 +97,30 @@ public class Main {
      */
     private static String getReadableWord(String stem) {
         return STEM_TO_WORD.getOrDefault(stem, stem);
+    }
+
+    /**
+     * Convert user input (readable word) back to the stem for searching
+     * Handles both stem input and readable word input
+     */
+    private static String getStemFromInput(String userInput) {
+        String input = userInput.trim().toLowerCase();
+
+        // First check if input is already a stem (direct match in keys)
+        if (STEM_TO_WORD.containsKey(input)) {
+            return input;
+        }
+
+        // Otherwise, search for the stem that maps to this readable word
+        for (Map.Entry<String, String> entry : STEM_TO_WORD.entrySet()) {
+            if (entry.getValue().equalsIgnoreCase(input)) {
+                return entry.getKey();
+            }
+        }
+
+        // If not found in mapping, return the input as-is (might be a word without
+        // mapping)
+        return input;
     }
 
     /**
@@ -277,7 +319,7 @@ public class Main {
         List<Map.Entry<String, Integer>> topTokens = getTopCommonTokens(tokenizedReviews, isPositive, 20);
 
         System.out.println("\n" + "=".repeat(70));
-        System.out.println("Top 20 most common words from " + sentimentType + " reviews:");
+        System.out.println("Most common meaningful words from " + sentimentType + " reviews:");
         System.out.println("=".repeat(70));
 
         // Display tokens with their counts
@@ -289,7 +331,10 @@ public class Main {
 
         // Step 3: Get user's token choice
         System.out.print("\nEnter the word you want to compare: ");
-        String chosenToken = scanner.nextLine().trim().toLowerCase();
+        String userInput = scanner.nextLine().trim().toLowerCase();
+
+        // Convert user input back to stem if needed
+        String chosenToken = getStemFromInput(userInput);
 
         // Step 4: Analyze token across all airlines
         analyzeTokenAcrossAirlines(airlineReviews, chosenToken, isPositive);
@@ -297,6 +342,8 @@ public class Main {
 
     /**
      * Get top N most common tokens from reviews based on sentiment
+     * First gets top N, then filters out meaningless comparison words from that
+     * list
      */
     private static List<Map.Entry<String, Integer>> getTopCommonTokens(List<AirlineReview> tokenizedReviews,
             boolean isPositive, int topN) {
@@ -315,7 +362,18 @@ public class Main {
         List<Map.Entry<String, Integer>> sortedTokens = new ArrayList<>(tokenFrequency.entrySet());
         sortedTokens.sort((a, b) -> b.getValue().compareTo(a.getValue()));
 
-        return sortedTokens.subList(0, Math.min(topN, sortedTokens.size()));
+        // Get top N first
+        List<Map.Entry<String, Integer>> topNTokens = sortedTokens.subList(0, Math.min(topN, sortedTokens.size()));
+
+        // Then filter out excluded words from the top N
+        List<Map.Entry<String, Integer>> filteredTokens = new ArrayList<>();
+        for (Map.Entry<String, Integer> entry : topNTokens) {
+            if (!EXCLUDED_COMPARISON_WORDS.contains(entry.getKey())) {
+                filteredTokens.add(entry);
+            }
+        }
+
+        return filteredTokens;
     }
 
     /**
