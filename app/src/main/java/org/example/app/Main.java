@@ -197,6 +197,7 @@ public class Main {
                         CharTermAttribute attr = stemmedStream.addAttribute(CharTermAttribute.class);
                         stemmedStream.reset();
 
+                        // Collect all stemmed tokens, filtering out useless words
                         while (stemmedStream.incrementToken()) {
                             if (!uselessWord.contains(attr.toString())) {
                                 tokens.add(attr.toString());
