@@ -1,4 +1,4 @@
-package org.example;
+package org.example.app;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -7,12 +7,21 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.*;
 
+
 import org.apache.lucene.analysis.Analyzer;
 import org.apache.lucene.analysis.TokenStream;
 import org.apache.lucene.analysis.en.EnglishAnalyzer;
 import org.apache.lucene.analysis.standard.StandardAnalyzer;
 import org.apache.lucene.analysis.tokenattributes.CharTermAttribute;
 import org.apache.lucene.analysis.en.PorterStemFilter;
+
+import com.opencsv.CSVReader;
+import com.opencsv.exceptions.CsvException;
+
+import org.example.ds.arraylist.AirlineArrayListImpl;
+import org.example.model.AirlineReview;
+import org.example.util.Pair;
+import org.example.util.WordCount;
 
 /*
  * BST Implementation Branch
@@ -237,4 +246,5 @@ public class Main {
         System.out.println("* More memory efficient (stores unique words only)");
         System.out.println("\nInsight: Top words reveal what passengers love/hate!\n");
     }
+
 }
