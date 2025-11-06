@@ -114,6 +114,9 @@ public class Main {
 
         // Now we have a hashmap of all tokenized airlinereviews class belonging to a specific airline
         // System.out.println(airlineReviews);
+
+        // ArrayList implementation test
+        System.out.println("ArrayList implementation test");
         arrayListImplementationTest(airlineReviews, "spirit-airlines");
     }
 }
