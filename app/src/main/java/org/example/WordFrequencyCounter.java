@@ -1,6 +1,7 @@
 package org.example;
 
 import java.util.*;
+import org.example.model.AirlineReview;
 
 /**
  * WordFrequencyCounter uses a PriorityQueue (Min-Heap) to efficiently find the top K most frequent words.
@@ -184,6 +185,13 @@ public class WordFrequencyCounter {
         Set<String> badWordSet = getWordSet(analysis.topBadWords);
         Set<String> commonWords = new HashSet<>(goodWordSet);
         commonWords.retainAll(badWordSet);
+        
+        // Debug: Print common words if any found
+        if (!commonWords.isEmpty() && analysis.airlineName.equals("air-canada-rouge")) {
+            System.out.println("\n[DEBUG] Common words for " + analysis.airlineName + ": " + commonWords);
+            System.out.println("[DEBUG] Good word set: " + goodWordSet);
+            System.out.println("[DEBUG] Bad word set: " + badWordSet);
+        }
         
         analysis.filteredGoodWords = removeCommonWords(analysis.topGoodWords, commonWords);
         analysis.filteredBadWords = removeCommonWords(analysis.topBadWords, commonWords);
