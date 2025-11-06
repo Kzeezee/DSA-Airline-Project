@@ -1,4 +1,4 @@
-package org.example.util;
+package org.example.model.util;
 
 public class Pair<L, R> {
     private final L left;

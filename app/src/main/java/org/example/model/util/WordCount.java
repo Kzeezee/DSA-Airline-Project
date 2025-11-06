@@ -1,4 +1,4 @@
-package org.example.util;
+package org.example.model.util;
 
 public class WordCount {
     private final String word;
