@@ -25,12 +25,9 @@ import com.opencsv.exceptions.CsvException;
  */
 
 public class Main {
-    // Useless words to filter out during tokenization
-    public static Set<String> uselessWords = Set.of(
-        "i", "you", "we", "my", "were", "have", "had", "us", "our",
-        "flight", "seat", "from", "was", "been", "be"
+    public static Set<String> uselessWord = Set.of("i", "you", "we", "my", "were", "have", "had"
+        ,"us","our"
     );
-    
     public static void main(String[] args) throws IOException {
         List<String[]> records = new ArrayList<>();
 
@@ -38,6 +35,7 @@ public class Main {
         InputStream input = Main.class.getClassLoader().getResourceAsStream("airline.csv");
         try (CSVReader reader = new CSVReader(new InputStreamReader(input))) {
             List<String[]> allRows = reader.readAll();
+            allRows.removeFirst(); // Remove first header row
             for (String[] row : allRows) {
                 String[] selectedValues = new String[4];
 
@@ -77,10 +75,8 @@ public class Main {
 
                         // Collect all stemmed tokens, filtering out useless words
                         while (stemmedStream.incrementToken()) {
-                            String token = attr.toString();
-                            // Only add tokens that are NOT in the useless words list
-                            if (!uselessWords.contains(token)) {
-                                tokens.add(token);
+                            if (!uselessWord.contains(attr.toString())) {
+                                tokens.add(attr.toString());
                             }
                         }
                         stemmedStream.end();
