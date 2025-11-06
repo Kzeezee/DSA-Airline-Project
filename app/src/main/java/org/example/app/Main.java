@@ -1,4 +1,4 @@
-package org.example;
+package org.example.app;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -17,6 +17,11 @@ import org.apache.lucene.analysis.en.PorterStemFilter;
 import com.opencsv.CSVReader;
 import com.opencsv.exceptions.CsvException;
 
+import org.example.ds.arraylist.AirlineArrayListImpl;
+import org.example.model.AirlineReview;
+import org.example.util.Pair;
+import org.example.util.WordCount;
+
 /*
  * Helping indexes in CSV
  * Index 0 - Airlines
@@ -30,7 +35,7 @@ public class Main {
         ,"us","our"
     );
     public static void arrayListImplementationTest(HashMap<String, List<AirlineReview>> airlineReviews, String airline) {
-        AirlineArrayListImpl airlineArrayListImpl = new AirlineArrayListImpl(airlineReviews, "\"" + airline + "\"");
+        AirlineArrayListImpl airlineArrayListImpl = new AirlineArrayListImpl(airlineReviews, airline);
         Pair<List<WordCount>, List<WordCount>> top10MostCommonWords = airlineArrayListImpl.getTop10MostCommonWords();
         System.out.println("Top 10 most common words in good reviews: ");
         for (WordCount wc : top10MostCommonWords.getLeft()) {

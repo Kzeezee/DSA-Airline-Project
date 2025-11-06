@@ -1,3 +1,5 @@
+package org.example.util;
+
 public class WordCount {
     private final String word;
     private final int count;

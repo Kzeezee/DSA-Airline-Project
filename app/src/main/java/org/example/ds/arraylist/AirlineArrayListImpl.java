@@ -1,6 +1,13 @@
+package org.example.ds.arraylist;
+
 import java.util.List;
 import java.util.ArrayList;
 import java.util.HashMap;
+
+import org.example.model.AirlineReview;
+import org.example.util.Pair;
+import org.example.util.TextAnalysisUtils;
+import org.example.util.WordCount;
 
 public class AirlineArrayListImpl {
     private HashMap<String, List<AirlineReview>> airlineReviews;
