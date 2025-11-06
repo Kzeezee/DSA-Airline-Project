@@ -25,6 +25,12 @@ import com.opencsv.exceptions.CsvException;
  */
 
 public class Main {
+    // Useless words to filter out during tokenization
+    public static Set<String> uselessWords = Set.of(
+        "i", "you", "we", "my", "were", "have", "had", "us", "our",
+        "flight", "seat", "from", "was", "been", "be"
+    );
+    
     public static void main(String[] args) throws IOException {
         List<String[]> records = new ArrayList<>();
 
@@ -69,9 +75,13 @@ public class Main {
                         CharTermAttribute attr = stemmedStream.addAttribute(CharTermAttribute.class);
                         stemmedStream.reset();
 
-                        // Collect all stemmed tokens
+                        // Collect all stemmed tokens, filtering out useless words
                         while (stemmedStream.incrementToken()) {
-                            tokens.add(attr.toString());
+                            String token = attr.toString();
+                            // Only add tokens that are NOT in the useless words list
+                            if (!uselessWords.contains(token)) {
+                                tokens.add(token);
+                            }
                         }
                         stemmedStream.end();
                     }
@@ -111,13 +121,76 @@ public class Main {
 
         // Now we have a hashmap of all tokenized airlinereviews class belonging to a
         // specific airline
-        // System.out.println(airlineReviews);
-        for (Map.Entry<String, List<AirlineReview>> ar : airlineReviews.entrySet()) {
-            // System.out.println(ar.getKey());
-            AirlineReview review = ar.getValue().getFirst();
-            if (review != null) {
-                System.out.println(Arrays.toString(review.getTokenizedReview()));
-            }
+        
+        System.out.println("\n" + "=".repeat(70));
+        System.out.println("AIRLINE REVIEW ANALYSIS - PRIORITY QUEUE IMPLEMENTATION");
+        System.out.println("Data Structure: PriorityQueue (Min-Heap) | Complexity: O(N log K)");
+        System.out.println("=".repeat(70));
+        
+        System.out.println("\nDataset Statistics:");
+        System.out.println("-".repeat(50));
+        System.out.println("Total Reviews Analyzed: " + tokenizedReviews.size());
+        System.out.println("Total Unique Airlines: " + airlineReviews.size());
+        
+        // Count overall good/bad for context
+        int totalGood = 0, totalBad = 0;
+        for (AirlineReview review : tokenizedReviews) {
+            if ("1".equals(review.getRecommended())) totalGood++;
+            else if ("0".equals(review.getRecommended())) totalBad++;
         }
+        System.out.println("Overall Good Reviews: " + totalGood);
+        System.out.println("Overall Bad Reviews: " + totalBad);
+        System.out.printf("Overall Recommendation Rate: %.1f%%\n", (totalGood * 100.0) / tokenizedReviews.size());
+
+        // ========== AIRLINE-SPECIFIC ANALYSIS (MAIN FOCUS) ==========
+        analyzeSpecificAirlines(airlineReviews, tokenizedReviews);
+    }
+
+    /**
+     * Separate method for airline-specific analysis
+     * This keeps the overall analysis and specific airline analysis separate
+     */
+    private static void analyzeSpecificAirlines(HashMap<String, List<AirlineReview>> airlineReviews, 
+                                                 List<AirlineReview> tokenizedReviews) {
+        System.out.println("\n\n" + "=".repeat(70));
+        System.out.println("AIRLINE-SPECIFIC ANALYSIS MODULE");
+        System.out.println("Using Priority Queue for Per-Airline Word Frequency");
+        System.out.println("=".repeat(70));
+        
+        // Find best and worst airlines
+        WordFrequencyCounter.findBestAndWorst(airlineReviews, tokenizedReviews);
+        
+        // Detailed analysis of top airlines by review count
+        System.out.println("\n\n" + "=".repeat(70));
+        System.out.println("DETAILED ANALYSIS - TOP AIRLINES BY REVIEW COUNT");
+        System.out.println("=".repeat(70));
+        
+        // Get list of unique airlines and sort by number of reviews
+        List<Map.Entry<String, List<AirlineReview>>> sortedAirlines = new ArrayList<>(airlineReviews.entrySet());
+        sortedAirlines.sort((a, b) -> b.getValue().size() - a.getValue().size());
+        
+        // Analyze top 5 airlines with most reviews
+        System.out.println("\nAnalyzing top 5 airlines with most reviews...\n");
+        List<WordFrequencyCounter.AirlineAnalysis> analyses = new ArrayList<>();
+        
+        int count = 0;
+        for (Map.Entry<String, List<AirlineReview>> entry : sortedAirlines) {
+            if (count >= 5) break;
+            
+            String airline = entry.getKey();
+            WordFrequencyCounter.AirlineAnalysis analysis = 
+                WordFrequencyCounter.analyzeAirline(airline, tokenizedReviews, 10);
+            
+            analyses.add(analysis);
+            WordFrequencyCounter.printAirlineAnalysis(analysis);
+            count++;
+        }
+        
+        // Print comparison table
+        WordFrequencyCounter.compareAirlines(analyses);
+        
+        System.out.println("\n" + "=".repeat(70));
+        System.out.println("Airline-specific analysis complete!");
+        System.out.println("=".repeat(70) + "\n");
     }
 }
