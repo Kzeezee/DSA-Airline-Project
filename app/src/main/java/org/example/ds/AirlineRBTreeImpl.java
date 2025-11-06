@@ -3,13 +3,14 @@ package org.example.ds;
 import java.util.List;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.PriorityQueue;
 
 import org.example.model.AirlineReview;
 import org.example.model.util.Pair;
 import org.example.model.util.TextAnalysisUtils;
 import org.example.model.util.WordCount;
 
-public class AirlineRBTreeImpl {
+public class AirlineRBTreeImpl implements WordFrequencyAnalyzer {
     private HashMap<String, List<AirlineReview>> airlineReviews;
     private String airline;
 
@@ -45,21 +46,14 @@ public class AirlineRBTreeImpl {
             }
         }
 
-        // Convert Red-Black Tree to sorted lists
-        List<WordCount> goodCounts = goodRBTree.toWordCountList(goodTotal);
-        List<WordCount> badCounts = badRBTree.toWordCountList(badTotal);
-
-        // Filter near-common dominant words
-        ArrayList<WordCount> filteredGood = new ArrayList<>();
-        ArrayList<WordCount> filteredBad = new ArrayList<>();
-        TextAnalysisUtils.filterNearCommonDominant(goodCounts, badCounts, 0.30, filteredGood, filteredBad);
-
-        // Get top 10
-        List<WordCount> topGood = TextAnalysisUtils.takeTopK(filteredGood, 10);
-        List<WordCount> topBad = TextAnalysisUtils.takeTopK(filteredBad, 10);
+        // Get top 10 directly from RB trees via heap-based traversal (no ArrayList build)
+        List<WordCount> topGood = goodRBTree.topK(goodTotal, 10);
+        List<WordCount> topBad = badRBTree.topK(badTotal, 10);
 
         return Pair.of(topGood, topBad);
     }
+
+    // Top-K moved into WordFrequencyRBTree to avoid materializing full list
 
     // Inner class: Red-Black Tree Node
     private static class RBNode {
@@ -235,21 +229,26 @@ public class AirlineRBTreeImpl {
             node.parent = leftChild;
         }
 
-        // In-order traversal to get sorted list of WordCount objects
-        public List<WordCount> toWordCountList(int totalWords) {
-            List<WordCount> result = new ArrayList<>();
-            inOrderTraversal(root, result, totalWords);
+        // Heap-based Top-K without building a full list
+        public List<WordCount> topK(int totalWords, int k) {
+            PriorityQueue<WordCount> minHeap = new PriorityQueue<>(k, (a, b) -> Integer.compare(a.getCount(), b.getCount()));
+            inOrderCollectTopK(root, minHeap, totalWords, k);
+            ArrayList<WordCount> result = new ArrayList<>(minHeap);
+            result.sort((a, b) -> Integer.compare(b.getCount(), a.getCount()));
             return result;
         }
 
-        private void inOrderTraversal(RBNode node, List<WordCount> result, int totalWords) {
-            if (node == null) {
-                return;
+        private void inOrderCollectTopK(RBNode node, PriorityQueue<WordCount> heap, int totalWords, int k) {
+            if (node == null) return;
+            inOrderCollectTopK(node.left, heap, totalWords, k);
+            WordCount wc = new WordCount(node.word, node.count, totalWords);
+            if (heap.size() < k) {
+                heap.offer(wc);
+            } else if (!heap.isEmpty() && wc.getCount() > heap.peek().getCount()) {
+                heap.poll();
+                heap.offer(wc);
             }
-
-            inOrderTraversal(node.left, result, totalWords);
-            result.add(new WordCount(node.word, node.count, totalWords));
-            inOrderTraversal(node.right, result, totalWords);
+            inOrderCollectTopK(node.right, heap, totalWords, k);
         }
     }
 }
