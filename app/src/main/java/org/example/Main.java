@@ -11,6 +11,7 @@ import org.apache.lucene.analysis.TokenStream;
 import org.apache.lucene.analysis.en.EnglishAnalyzer;
 import org.apache.lucene.analysis.standard.StandardAnalyzer;
 import org.apache.lucene.analysis.tokenattributes.CharTermAttribute;
+import org.example.experiment.MapImpl;
 import org.apache.lucene.analysis.en.PorterStemFilter;
 
 import com.opencsv.CSVReader;
@@ -26,7 +27,7 @@ import com.opencsv.exceptions.CsvException;
 
 public class Main {
     public static Set<String> uselessWord = Set.of("i", "you", "we", "my", "were", "have", "had"
-        ,"us","our"
+        ,"us","our","so","from"
     );
     public static void main(String[] args) throws IOException {
         List<String[]> records = new ArrayList<>();
@@ -71,7 +72,7 @@ public class Main {
                             TokenStream stemmedStream = new PorterStemFilter(tokenStream)) {
                         CharTermAttribute attr = stemmedStream.addAttribute(CharTermAttribute.class);
                         stemmedStream.reset();
-
+ 
                         // Collect all stemmed tokens
                         while (stemmedStream.incrementToken()) {
                             if (!uselessWord.contains(attr.toString())) {
@@ -118,11 +119,7 @@ public class Main {
         // specific airline
         // System.out.println(airlineReviews);
         for (Map.Entry<String, List<AirlineReview>> ar : airlineReviews.entrySet()) {
-            // System.out.println(ar.getKey());
-            AirlineReview review = ar.getValue().getFirst();
-            if (review != null) {
-                System.out.println(Arrays.toString(review.getTokenizedReview()));
-            }
+            MapImpl.topFreqWithHashMap(ar.getKey(), ar.getValue());
         }
     }
 }
