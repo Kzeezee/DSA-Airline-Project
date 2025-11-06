@@ -21,8 +21,8 @@ import com.opencsv.exceptions.CsvException;
 import org.example.WordFrequencyCounter;
 import org.example.ds.AirlineArrayListImpl;
 import org.example.ds.AirlineBSTImpl;
-import org.example.ds.AirlineHashMapImpl;
 import org.example.ds.AirlineRBTreeImpl;
+import org.example.ds.AirlineMapImpl;
 import org.example.model.AirlineReview;
 import org.example.model.util.Pair;
 import org.example.model.util.TextAnalysisUtils;
@@ -497,7 +497,7 @@ public class Main {
         System.out.println("=".repeat(70));
 
         // Run test using ArrayList-based implementation
-        AirlineHashMapImpl.hashMapImplementationTest(airlineReviews, testAirline);
+        AirlineMapImpl.MapImplementationTest(airlineReviews, testAirline);
 
         // Summary of current implementation
         System.out.println("\n========================================");
