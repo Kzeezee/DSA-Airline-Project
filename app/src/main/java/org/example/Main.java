@@ -26,9 +26,103 @@ import org.apache.lucene.analysis.en.PorterStemFilter;
  */
 
 public class Main {
-    public static Set<String> uselessWord = Set.of("i", "you", "we", "my", "were", "have", "had"
-        ,"us","our"
-    );
+    public static Set<String> uselessWord = Set.of("i", "you", "we", "my", "were", "have", "had", "us", "our");
+
+    /**
+     * Parse CSV line handling quoted fields with commas
+     */
+    private static String[] parseCSVLine(String line) {
+        List<String> result = new ArrayList<>();
+        boolean inQuotes = false;
+        StringBuilder field = new StringBuilder();
+
+        for (int i = 0; i < line.length(); i++) {
+            char c = line.charAt(i);
+
+            if (c == '"') {
+                if (i + 1 < line.length() && line.charAt(i + 1) == '"') {
+                    field.append('"');
+                    i++;
+                } else {
+                    inQuotes = !inQuotes;
+                }
+            } else if (c == ',' && !inQuotes) {
+                result.add(field.toString());
+                field = new StringBuilder();
+            } else {
+                field.append(c);
+            }
+        }
+        result.add(field.toString());
+        return result.toArray(new String[0]);
+    }
+
+    /**
+     * Test BST implementation for word frequency counting
+     */
+    public static void bstImplementationTest(HashMap<String, List<AirlineReview>> airlineReviews, String airline) {
+        System.out.println("\n========================================");
+        System.out.println("      BST Implementation Test");
+        System.out.println("========================================");
+
+        AirlineBSTImpl airlineBSTImpl = new AirlineBSTImpl(airlineReviews, airline);
+        Pair<List<WordCount>, List<WordCount>> top10MostCommonWords = airlineBSTImpl.getTop10MostCommonWords();
+
+        // Count positive vs negative reviews
+        List<AirlineReview> reviews = airlineReviews.get(airline);
+        int positiveCount = 0;
+        int negativeCount = 0;
+
+        if (reviews != null) {
+            for (AirlineReview review : reviews) {
+                if (TextAnalysisUtils.isPositiveRecommendation(review.getRecommended())) {
+                    positiveCount++;
+                } else {
+                    negativeCount++;
+                }
+            }
+        }
+
+        int totalReviews = positiveCount + negativeCount;
+        double positivePercent = totalReviews > 0 ? (positiveCount * 100.0 / totalReviews) : 0;
+        double negativePercent = totalReviews > 0 ? (negativeCount * 100.0 / totalReviews) : 0;
+
+        System.out.println("\n[GOOD] Top 10 most common words in POSITIVE reviews:");
+        System.out.println("-----------------------------------------");
+        int goodRank = 1;
+        for (WordCount wc : top10MostCommonWords.getLeft()) {
+            System.out.printf("%2d. %s\n", goodRank++, wc);
+        }
+
+        System.out.println("\n[BAD] Top 10 most common words in NEGATIVE reviews:");
+        System.out.println("-----------------------------------------");
+        int badRank = 1;
+        for (WordCount wc : top10MostCommonWords.getRight()) {
+            System.out.printf("%2d. %s\n", badRank++, wc);
+        }
+
+        // Overall sentiment analysis
+        System.out.println("\n========================================");
+        System.out.println("      Overall Sentiment Analysis");
+        System.out.println("========================================");
+        System.out.printf("Total Reviews: %d\n", totalReviews);
+        System.out.printf("Positive Reviews: %d (%.1f%%)\n", positiveCount, positivePercent);
+        System.out.printf("Negative Reviews: %d (%.1f%%)\n", negativeCount, negativePercent);
+
+        System.out.println("\n----------------------------------------");
+        if (positiveCount > negativeCount) {
+            System.out.println("VERDICT: MOSTLY POSITIVE");
+            System.out.printf("Customers generally recommend this airline!\n");
+        } else if (negativeCount > positiveCount) {
+            System.out.println("VERDICT: MOSTLY NEGATIVE");
+            System.out.printf("Customers generally do NOT recommend this airline.\n");
+        } else {
+            System.out.println("VERDICT: MIXED");
+            System.out.printf("Reviews are evenly split.\n");
+        }
+        System.out.println("----------------------------------------");
+    }
+
     public static void main(String[] args) throws IOException {
         List<String[]> records = new ArrayList<>();
 
@@ -43,20 +137,36 @@ public class Main {
         System.out.println("✓ Found airline.csv in resources");
 
         // Read values from CSV
-        InputStream input = Main.class.getClassLoader().getResourceAsStream("airline.csv");
-        try (CSVReader reader = new CSVReader(new InputStreamReader(input))) {
-            List<String[]> allRows = reader.readAll();
-            allRows.removeFirst(); // Remove first header row
-            for (String[] row : allRows) {
+        try (BufferedReader br = new BufferedReader(new InputStreamReader(csvStream))) {
+            String line = br.readLine(); // Skip header
+            StringBuilder currentLine = new StringBuilder();
+            boolean inQuotes = false;
+            
+            while ((line = br.readLine()) != null) {
+                currentLine.append(line);
+                
+                // Check if we're inside a quoted field
+                for (char c : line.toCharArray()) {
+                    if (c == '"') inQuotes = !inQuotes;
+                }
+                
+                // If still in quotes, this is a multi-line field
+                if (inQuotes) {
+                    currentLine.append("\n");
+                    continue;
+                }
+                
+                // Parse the complete line
+                String[] row = parseCSVLine(currentLine.toString());
                 String[] selectedValues = new String[4];
 
-                selectedValues[0] = values.length > 0 ? (values[0].isEmpty() ? null : values[0]) : null;
-                selectedValues[1] = values.length > 6 ? (values[6].isEmpty() ? null : values[6]) : null;
-                selectedValues[2] = values.length > 11 ? (values[11].isEmpty() ? null : values[11]) : null;
-                selectedValues[3] = values.length > 19 ? (values[19].isEmpty() ? null : values[19]) : null;
+                selectedValues[0] = row.length > 0 ? (row[0].isEmpty() ? null : row[0]) : null;
+                selectedValues[1] = row.length > 6 ? (row[6].isEmpty() ? null : row[6]) : null;
+                selectedValues[2] = row.length > 11 ? (row[11].isEmpty() ? null : row[11]) : null;
+                selectedValues[3] = row.length > 19 ? (row[19].isEmpty() ? null : row[19]) : null;
 
                 records.add(selectedValues);
-                fullLine = new StringBuilder();
+                currentLine = new StringBuilder();
             }
         } catch (Exception e) {
             System.out.println("Error reading CSV: " + e.getMessage());
