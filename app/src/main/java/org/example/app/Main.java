@@ -3,7 +3,6 @@ package org.example.app;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.StringReader;
-import java.time.Instant;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.*;
@@ -15,8 +14,6 @@ import org.apache.lucene.analysis.standard.StandardAnalyzer;
 import org.apache.lucene.analysis.tokenattributes.CharTermAttribute;
 import org.apache.lucene.analysis.en.PorterStemFilter;
 
-import com.opencsv.CSVReader;
-import com.opencsv.exceptions.CsvException;
 
 import org.example.WordFrequencyCounter;
 import org.example.ds.AirlineArrayListImpl;
@@ -496,8 +493,23 @@ public class Main {
         System.out.println("  Analyzing: " + testAirline);
         System.out.println("=".repeat(70));
 
-        // Run test using ArrayList-based implementation
-        AirlineMapImpl.MapImplementationTest(airlineReviews, testAirline);
+        // Run test using Map-based implementation (instance API)
+        AirlineMapImpl mapImpl = new AirlineMapImpl(airlineReviews, testAirline);
+        Pair<List<WordCount>, List<WordCount>> mapTop10 = mapImpl.getTop10MostCommonWords();
+
+        System.out.println("\n[GOOD] Top 10 most common words in POSITIVE reviews:");
+        System.out.println("-----------------------------------------");
+        int mapGoodRank = 1;
+        for (WordCount wc : mapTop10.getLeft()) {
+            System.out.printf("%2d. %s\n", mapGoodRank++, wc);
+        }
+
+        System.out.println("\n[BAD] Top 10 most common words in NEGATIVE reviews:");
+        System.out.println("-----------------------------------------");
+        int mapBadRank = 1;
+        for (WordCount wc : mapTop10.getRight()) {
+            System.out.printf("%2d. %s\n", mapBadRank++, wc);
+        }
 
         // Summary of current implementation
         System.out.println("\n========================================");
