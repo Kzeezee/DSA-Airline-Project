@@ -25,6 +25,9 @@ import com.opencsv.exceptions.CsvException;
  */
 
 public class Main {
+    public static Set<String> uselessWord = Set.of("i", "you", "we", "my", "were", "have", "had"
+        ,"us","our"
+    );
     public static void main(String[] args) throws IOException {
         List<String[]> records = new ArrayList<>();
 
@@ -71,7 +74,9 @@ public class Main {
 
                         // Collect all stemmed tokens
                         while (stemmedStream.incrementToken()) {
-                            tokens.add(attr.toString());
+                            if (!uselessWord.contains(attr.toString())) {
+                                tokens.add(attr.toString());
+                            }
                         }
                         stemmedStream.end();
                     }
