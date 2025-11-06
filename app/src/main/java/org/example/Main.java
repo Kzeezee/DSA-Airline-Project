@@ -35,6 +35,7 @@ public class Main {
         InputStream input = Main.class.getClassLoader().getResourceAsStream("airline.csv");
         try (CSVReader reader = new CSVReader(new InputStreamReader(input))) {
             List<String[]> allRows = reader.readAll();
+            allRows.removeFirst(); // Remove first header row
             for (String[] row : allRows) {
                 String[] selectedValues = new String[4];
 
