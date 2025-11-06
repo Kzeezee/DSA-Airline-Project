@@ -4,14 +4,12 @@ import java.io.IOException;
 import java.io.StringReader;
 import java.util.*;
 
-import javax.xml.crypto.dsig.keyinfo.KeyValue;
 
 import org.apache.lucene.analysis.Analyzer;
 import org.apache.lucene.analysis.TokenStream;
 import org.apache.lucene.analysis.en.EnglishAnalyzer;
 import org.apache.lucene.analysis.standard.StandardAnalyzer;
 import org.apache.lucene.analysis.tokenattributes.CharTermAttribute;
-import org.slf4j.event.KeyValuePair;
 import org.apache.lucene.analysis.en.PorterStemFilter;
 
 /*
@@ -39,21 +37,40 @@ public class Main {
     public static void main(String[] args) throws IOException {
         List<String[]> records = new ArrayList<>();
 
-        // Read values from CSV
+        // Read values from CSV (handles quoted newlines)
         try (BufferedReader br = new BufferedReader(new FileReader("airline.csv"))) {
+            String header = br.readLine(); // Skip header
             String line;
-            line = br.readLine(); // Skip header
+            StringBuilder sb = new StringBuilder();
+            boolean inQuotes = false;
             while ((line = br.readLine()) != null) {
-                
-                String[] values = line.split(",(?=([^\"]*\"[^\"]*\")*[^\"]*$)", -1); // Handle CSV with quotes
-                String[] selectedValues = new String[4]; // Fixed size array for our 4 required fields
-                
-                // Fill the array with selected indices, handling missing or out of bounds values
-                selectedValues[0] = values.length > 0 ? (values[0].isEmpty() ? null : values[0]) : null;  // airline
-                selectedValues[1] = values.length > 6 ? (values[6].isEmpty() ? null : values[6]) : null;  // review content
-                selectedValues[2] = values.length > 11 ? (values[11].isEmpty() ? null : values[11]) : null; // overall rating
-                selectedValues[3] = values.length > 19 ? (values[19].isEmpty() ? null : values[19]) : null; // recommended
-                
+                if (sb.length() > 0) sb.append("\n");
+                sb.append(line);
+                inQuotes = updateInQuotes(line, inQuotes);
+                if (!inQuotes) {
+                    String recordLine = sb.toString();
+                    sb.setLength(0);
+
+                    String[] values = recordLine.split(",(?=([^\"]*\"[^\"]*\")*[^\"]*$)", -1); // commas not inside quotes
+                    String[] selectedValues = new String[4]; // our 4 required fields
+
+                    selectedValues[0] = values.length > 0 ? (values[0].isEmpty() ? null : values[0]) : null;  // airline
+                    selectedValues[1] = values.length > 6 ? (values[6].isEmpty() ? null : values[6]) : null;  // review content
+                    selectedValues[2] = values.length > 11 ? (values[11].isEmpty() ? null : values[11]) : null; // overall rating
+                    selectedValues[3] = values.length > 19 ? (values[19].isEmpty() ? null : values[19]) : null; // recommended
+
+                    records.add(selectedValues);
+                }
+            }
+            // Handle any trailing record without closing quote
+            if (sb.length() > 0 && !inQuotes) {
+                String recordLine = sb.toString();
+                String[] values = recordLine.split(",(?=([^\"]*\"[^\"]*\")*[^\"]*$)", -1);
+                String[] selectedValues = new String[4];
+                selectedValues[0] = values.length > 0 ? (values[0].isEmpty() ? null : values[0]) : null;
+                selectedValues[1] = values.length > 6 ? (values[6].isEmpty() ? null : values[6]) : null;
+                selectedValues[2] = values.length > 11 ? (values[11].isEmpty() ? null : values[11]) : null;
+                selectedValues[3] = values.length > 19 ? (values[19].isEmpty() ? null : values[19]) : null;
                 records.add(selectedValues);
             }
         } catch (Exception e) {
@@ -113,10 +130,32 @@ public class Main {
         }
 
         // Now we have a hashmap of all tokenized airlinereviews class belonging to a specific airline
-        // System.out.println(airlineReviews);
+        for (String airline : airlineReviews.keySet()) {
+            System.out.println("--------------------------------");
+            System.out.println("Airline: " + airline);
+        }
 
         // ArrayList implementation test
         System.out.println("ArrayList implementation test");
         arrayListImplementationTest(airlineReviews, "spirit-airlines");
+    }
+
+    private static boolean updateInQuotes(String line, boolean inQuotes) {
+        int len = line.length();
+        for (int i = 0; i < len; i++) {
+            char c = line.charAt(i);
+            if (c == '"') {
+                if (inQuotes) {
+                    if (i + 1 < len && line.charAt(i + 1) == '"') {
+                        i++; // skip escaped quote ""
+                    } else {
+                        inQuotes = false;
+                    }
+                } else {
+                    inQuotes = true;
+                }
+            }
+        }
+        return inQuotes;
     }
 }
