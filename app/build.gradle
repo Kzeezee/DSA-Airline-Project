@@ -42,6 +42,11 @@ application {
     mainClass = 'org.example.app.Main'
 }
 
+// Enable standard input for the run task
+run {
+    standardInput = System.in
+}
+
 tasks.named('test') {
     // Use JUnit Platform for unit tests.
     useJUnitPlatform()
