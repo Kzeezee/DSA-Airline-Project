@@ -1,4 +1,4 @@
-package org.example;
+package org.example.model;
 import java.util.Arrays;
 
 public class AirlineReview {
@@ -42,5 +42,5 @@ public class AirlineReview {
         return "AirlineReview [airline=" + airline + ", tokenizedReview=" + Arrays.toString(tokenizedReview)
                 + ", overallRating=" + overallRating + ", recommended=" + recommended + "]";
     }
-    
 }
+
