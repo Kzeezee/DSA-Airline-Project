@@ -45,20 +45,23 @@ public class AirlineBSTImpl {
             }
         }
 
-        // Convert BST to sorted lists
-        List<WordCount> goodCounts = goodBST.toWordCountList(goodTotal);
-        List<WordCount> badCounts = badBST.toWordCountList(badTotal);
-
-        // Filter near-common dominant words
-        ArrayList<WordCount> filteredGood = new ArrayList<>();
-        ArrayList<WordCount> filteredBad = new ArrayList<>();
-        TextAnalysisUtils.filterNearCommonDominant(goodCounts, badCounts, 0.30, filteredGood, filteredBad);
-
-        // Get top 10
-        List<WordCount> topGood = TextAnalysisUtils.takeTopK(filteredGood, 10);
-        List<WordCount> topBad = TextAnalysisUtils.takeTopK(filteredBad, 10);
+        // Get top 10 directly from BSTs using BST-specific method
+        List<WordCount> topGood = topKFromBST(goodBST, goodTotal, 10);
+        List<WordCount> topBad = topKFromBST(badBST, badTotal, 10);
 
         return Pair.of(topGood, topBad);
+    }
+
+    // BST-specific Top-K: traverse BST to list, sort by count desc, take first k
+    private List<WordCount> topKFromBST(WordFrequencyBST bst, int totalWords, int k) {
+        List<WordCount> counts = bst.toWordCountList(totalWords);
+        counts.sort((a, b) -> Integer.compare(b.getCount(), a.getCount()));
+        int limit = Math.min(k, counts.size());
+        ArrayList<WordCount> result = new ArrayList<>(limit);
+        for (int i = 0; i < limit; i++) {
+            result.add(counts.get(i));
+        }
+        return result;
     }
 
     // Inner class: BST Node
@@ -118,7 +121,6 @@ public class AirlineBSTImpl {
             if (node == null) {
                 return;
             }
-
             inOrderTraversal(node.left, result, totalWords);
             result.add(new WordCount(node.word, node.count, totalWords));
             inOrderTraversal(node.right, result, totalWords);

@@ -31,19 +31,20 @@ public class AirlineArrayListImpl {
         List<WordCount> goodCounts = TextAnalysisUtils.compressCounts(goodWords);
         List<WordCount> badCounts = TextAnalysisUtils.compressCounts(badWords);
 
-        ArrayList<WordCount> filteredGood = new ArrayList<>();
-        ArrayList<WordCount> filteredBad = new ArrayList<>();
-        TextAnalysisUtils.filterNearCommonDominant(goodCounts, badCounts, 0.30, filteredGood, filteredBad);
-
-        List<WordCount> topGood = TextAnalysisUtils.takeTopK(filteredGood, 10);
-        List<WordCount> topBad = TextAnalysisUtils.takeTopK(filteredBad, 10);
+        List<WordCount> topGood = topKFromArrayList(goodCounts, 10);
+        List<WordCount> topBad = topKFromArrayList(badCounts, 10);
 
         return Pair.<List<WordCount>, List<WordCount>>of(topGood, topBad);
     }
 
-    
+    private List<WordCount> topKFromArrayList(List<WordCount> counts, int k) {
+        ArrayList<WordCount> sorted = new ArrayList<>(counts);
+        sorted.sort((a, b) -> Integer.compare(b.getCount(), a.getCount()));
+        ArrayList<WordCount> result = new ArrayList<>();
+        int limit = Math.min(k, sorted.size());
+        for (int idx = 0; idx < limit; idx++) {
+            result.add(sorted.get(idx));
+        }
+        return result;
+    }
 }
-
- 
-
- 
