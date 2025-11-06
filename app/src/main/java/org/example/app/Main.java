@@ -22,6 +22,7 @@ import org.example.WordFrequencyCounter;
 import org.example.ds.AirlineArrayListImpl;
 import org.example.ds.AirlineBSTImpl;
 import org.example.ds.AirlineHashMapImpl;
+import org.example.ds.AirlineRBTreeImpl;
 import org.example.model.AirlineReview;
 import org.example.model.util.Pair;
 import org.example.model.util.TextAnalysisUtils;
@@ -125,6 +126,74 @@ public class Main {
         if (positiveCount > negativeCount) {
             System.out.println("VERDICT: MOSTLY POSITIVE");
             System.out.printf("Customers generally recommend this airline!\n");
+        } else if (negativeCount > positiveCount) {
+            System.out.println("VERDICT: MOSTLY NEGATIVE");
+            System.out.printf("Customers generally do NOT recommend this airline.\n");
+        } else {
+            System.out.println("VERDICT: MIXED");
+            System.out.printf("Reviews are evenly split.\n");
+        }
+        System.out.println("----------------------------------------");
+    }
+
+    /**
+     * Test Red-Black Tree implementation for word frequency counting
+     */
+    public static void redBlackTreeImplementationTest(HashMap<String, List<AirlineReview>> airlineReviews, String airline) {
+        System.out.println("\n========================================");
+        System.out.println("      Red-Black Tree Implementation Test");
+        System.out.println("========================================");
+
+        AirlineRBTreeImpl airlineRBTreeImpl = new AirlineRBTreeImpl(airlineReviews, airline);
+        Pair<List<WordCount>, List<WordCount>> top10MostCommonWords = airlineRBTreeImpl.getTop10MostCommonWords();
+
+        // Count positive vs negative reviews
+        List<AirlineReview> reviews = airlineReviews.get(airline);
+        int positiveCount = 0;
+        int negativeCount = 0;
+
+        if (reviews != null) {
+            for (AirlineReview review : reviews) {
+                if (TextAnalysisUtils.isPositiveRecommendation(review.getRecommended())) {
+                    positiveCount++;
+                } else {
+                    negativeCount++;
+                }
+            }
+        }
+
+        int totalReviews = positiveCount + negativeCount;
+        double positivePercent = totalReviews > 0 ? (positiveCount * 100.0 / totalReviews) : 0;
+        double negativePercent = totalReviews > 0 ? (negativeCount * 100.0 / totalReviews) : 0;
+
+        // Display results
+        System.out.println("\n[GOOD] Top 10 most common words in POSITIVE reviews:");
+        System.out.println("-".repeat(41));
+        int i = 1;
+        for (WordCount wc : top10MostCommonWords.getLeft()) {
+            System.out.printf("%2d. %s%n", i++, wc);
+        }
+
+        System.out.println("\n[BAD] Top 10 most common words in NEGATIVE reviews:");
+        System.out.println("-".repeat(41));
+        i = 1;
+        for (WordCount wc : top10MostCommonWords.getRight()) {
+            System.out.printf("%2d. %s%n", i++, wc);
+        }
+
+        // Display sentiment analysis
+        System.out.println("\n========================================");
+        System.out.println("      Overall Sentiment Analysis");
+        System.out.println("========================================");
+        System.out.println("Total Reviews: " + totalReviews);
+        System.out.printf("Positive Reviews: %d (%.1f%%)%n", positiveCount, positivePercent);
+        System.out.printf("Negative Reviews: %d (%.1f%%)%n", negativeCount, negativePercent);
+
+        // Verdict
+        System.out.println("\n" + "-".repeat(40));
+        if (positiveCount > negativeCount) {
+            System.out.println("VERDICT: MOSTLY POSITIVE");
+            System.out.printf("Customers generally recommend this airline.\n");
         } else if (negativeCount > positiveCount) {
             System.out.println("VERDICT: MOSTLY NEGATIVE");
             System.out.printf("Customers generally do NOT recommend this airline.\n");
@@ -378,6 +447,25 @@ public class Main {
         System.out.println("* Counts word occurrences during insertion");
         System.out.println("* More memory efficient (stores unique words only)");
         System.out.println("\nInsight: Top words reveal what passengers love/hate!");
+
+        // ========== RED-BLACK TREE IMPLEMENTATION ANALYSIS ==========
+        System.out.println("\n\n" + "=".repeat(70));
+        System.out.println("  RED-BLACK TREE IMPLEMENTATION - AIRLINE ANALYSIS");
+        System.out.println("  Data Structure: Red-Black Tree (Self-Balancing BST) | Complexity: O(N log N)");
+        System.out.println("=".repeat(70));
+        System.out.println("  Analyzing: " + testAirline);
+        System.out.println("=".repeat(70));
+
+        redBlackTreeImplementationTest(airlineReviews, testAirline);
+
+        System.out.println("\n========================================");
+        System.out.println("      Red-Black Tree Implementation Summary");
+        System.out.println("========================================");
+        System.out.println("* Uses Red-Black Tree for self-balancing word counting");
+        System.out.println("* Guarantees O(log N) operations through color-based balancing");
+        System.out.println("* Prevents worst-case O(N) behavior of unbalanced BST");
+        System.out.println("* Maintains order while ensuring balanced height");
+        System.out.println("\nInsight: RBT combines BST benefits with guaranteed performance!");
 
         // ========== ARRAYLIST IMPLEMENTATION ANALYSIS ==========
         System.out.println("\n\n" + "=".repeat(70));
