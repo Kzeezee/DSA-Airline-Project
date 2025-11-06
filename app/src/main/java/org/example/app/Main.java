@@ -6,6 +6,7 @@ import java.io.InputStreamReader;
 import java.io.StringReader;
 import java.util.*;
 
+
 import org.apache.lucene.analysis.Analyzer;
 import org.apache.lucene.analysis.TokenStream;
 import org.apache.lucene.analysis.en.EnglishAnalyzer;
@@ -28,6 +29,19 @@ public class Main {
     public static Set<String> uselessWord = Set.of("i", "you", "we", "my", "were", "have", "had"
         ,"us","our"
     );
+    public static void arrayListImplementationTest(HashMap<String, List<AirlineReview>> airlineReviews, String airline) {
+        AirlineArrayListImpl airlineArrayListImpl = new AirlineArrayListImpl(airlineReviews, "\"" + airline + "\"");
+        Pair<List<WordCount>, List<WordCount>> top10MostCommonWords = airlineArrayListImpl.getTop10MostCommonWords();
+        System.out.println("Top 10 most common words in good reviews: ");
+        for (WordCount wc : top10MostCommonWords.getLeft()) {
+            System.out.println(wc);
+        }
+        System.out.println("Top 10 most common words in bad reviews: ");
+        for (WordCount wc : top10MostCommonWords.getRight()) {
+            System.out.println(wc);
+        }
+    }
+
     public static void main(String[] args) throws IOException {
         List<String[]> records = new ArrayList<>();
 
@@ -124,5 +138,15 @@ public class Main {
                 System.out.println(Arrays.toString(review.getTokenizedReview()));
             }
         }
+        // Now we have a hashmap of all tokenized airlinereviews class belonging to a specific airline
+        for (String airline : airlineReviews.keySet()) {
+            System.out.println("--------------------------------");
+            System.out.println("Airline: " + airline);
+        }
+
+        // ArrayList implementation test
+        System.out.println("ArrayList implementation test");
+        arrayListImplementationTest(airlineReviews, "spirit-airlines");
     }
+
 }
