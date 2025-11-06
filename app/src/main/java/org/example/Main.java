@@ -1,12 +1,9 @@
 package org.example;
 
-import java.io.BufferedReader;
-import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.StringReader;
-import java.net.URL;
 import java.util.*;
 
 import org.apache.lucene.analysis.Analyzer;
@@ -43,6 +40,11 @@ public class Main {
                 selectedValues[2] = row.length > 11 ? (row[11].isEmpty() ? null : row[11]) : null; // overall rating
                 selectedValues[3] = row.length > 19 ? (row[19].isEmpty() ? null : row[19]) : null; // recommended
 
+                for (String value : selectedValues) {
+                    if (value == null) {
+                        continue;
+                    }
+                }
                 records.add(selectedValues);
             }
 
@@ -112,7 +114,10 @@ public class Main {
         // System.out.println(airlineReviews);
         for (Map.Entry<String, List<AirlineReview>> ar : airlineReviews.entrySet()) {
             // System.out.println(ar.getKey());
-            System.out.println(ar);
+            AirlineReview review = ar.getValue().getFirst();
+            if (review != null) {
+                System.out.println(Arrays.toString(review.getTokenizedReview()));
+            }
         }
     }
 }
