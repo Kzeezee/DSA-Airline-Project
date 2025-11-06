@@ -1,10 +1,11 @@
-package org.example;
+package org.example.app;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.StringReader;
 import java.util.*;
+
 
 import org.apache.lucene.analysis.Analyzer;
 import org.apache.lucene.analysis.TokenStream;
@@ -15,6 +16,11 @@ import org.apache.lucene.analysis.en.PorterStemFilter;
 
 import com.opencsv.CSVReader;
 import com.opencsv.exceptions.CsvException;
+
+import org.example.ds.arraylist.AirlineArrayListImpl;
+import org.example.model.AirlineReview;
+import org.example.util.Pair;
+import org.example.util.WordCount;
 
 /*
  * Helping indexes in CSV
@@ -28,6 +34,19 @@ public class Main {
     public static Set<String> uselessWord = Set.of("i", "you", "we", "my", "were", "have", "had"
         ,"us","our"
     );
+    public static void arrayListImplementationTest(HashMap<String, List<AirlineReview>> airlineReviews, String airline) {
+        AirlineArrayListImpl airlineArrayListImpl = new AirlineArrayListImpl(airlineReviews, airline);
+        Pair<List<WordCount>, List<WordCount>> top10MostCommonWords = airlineArrayListImpl.getTop10MostCommonWords();
+        System.out.println("Top 10 most common words in good reviews: ");
+        for (WordCount wc : top10MostCommonWords.getLeft()) {
+            System.out.println(wc);
+        }
+        System.out.println("Top 10 most common words in bad reviews: ");
+        for (WordCount wc : top10MostCommonWords.getRight()) {
+            System.out.println(wc);
+        }
+    }
+
     public static void main(String[] args) throws IOException {
         List<String[]> records = new ArrayList<>();
 
@@ -134,59 +153,15 @@ public class Main {
             if ("1".equals(review.getRecommended())) totalGood++;
             else if ("0".equals(review.getRecommended())) totalBad++;
         }
-        System.out.println("Overall Good Reviews: " + totalGood);
-        System.out.println("Overall Bad Reviews: " + totalBad);
-        System.out.printf("Overall Recommendation Rate: %.1f%%\n", (totalGood * 100.0) / tokenizedReviews.size());
-
-        // ========== AIRLINE-SPECIFIC ANALYSIS (MAIN FOCUS) ==========
-        analyzeSpecificAirlines(airlineReviews, tokenizedReviews);
-    }
-
-    /**
-     * Separate method for airline-specific analysis
-     * This keeps the overall analysis and specific airline analysis separate
-     */
-    private static void analyzeSpecificAirlines(HashMap<String, List<AirlineReview>> airlineReviews, 
-                                                 List<AirlineReview> tokenizedReviews) {
-        System.out.println("\n\n" + "=".repeat(70));
-        System.out.println("AIRLINE-SPECIFIC ANALYSIS MODULE");
-        System.out.println("Using Priority Queue for Per-Airline Word Frequency");
-        System.out.println("=".repeat(70));
-        
-        // Find best and worst airlines
-        WordFrequencyCounter.findBestAndWorst(airlineReviews, tokenizedReviews);
-        
-        // Detailed analysis of top airlines by review count
-        System.out.println("\n\n" + "=".repeat(70));
-        System.out.println("DETAILED ANALYSIS - TOP AIRLINES BY REVIEW COUNT");
-        System.out.println("=".repeat(70));
-        
-        // Get list of unique airlines and sort by number of reviews
-        List<Map.Entry<String, List<AirlineReview>>> sortedAirlines = new ArrayList<>(airlineReviews.entrySet());
-        sortedAirlines.sort((a, b) -> b.getValue().size() - a.getValue().size());
-        
-        // Analyze top 5 airlines with most reviews
-        System.out.println("\nAnalyzing top 5 airlines with most reviews...\n");
-        List<WordFrequencyCounter.AirlineAnalysis> analyses = new ArrayList<>();
-        
-        int count = 0;
-        for (Map.Entry<String, List<AirlineReview>> entry : sortedAirlines) {
-            if (count >= 5) break;
-            
-            String airline = entry.getKey();
-            WordFrequencyCounter.AirlineAnalysis analysis = 
-                WordFrequencyCounter.analyzeAirline(airline, tokenizedReviews, 10);
-            
-            analyses.add(analysis);
-            WordFrequencyCounter.printAirlineAnalysis(analysis);
-            count++;
+        // Now we have a hashmap of all tokenized airlinereviews class belonging to a specific airline
+        for (String airline : airlineReviews.keySet()) {
+            System.out.println("--------------------------------");
+            System.out.println("Airline: " + airline);
         }
-        
-        // Print comparison table
-        WordFrequencyCounter.compareAirlines(analyses);
-        
-        System.out.println("\n" + "=".repeat(70));
-        System.out.println("Airline-specific analysis complete!");
-        System.out.println("=".repeat(70) + "\n");
+
+        // ArrayList implementation test
+        System.out.println("ArrayList implementation test");
+        arrayListImplementationTest(airlineReviews, "spirit-airlines");
     }
+
 }
