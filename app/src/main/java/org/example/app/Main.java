@@ -18,9 +18,11 @@ import org.apache.lucene.analysis.en.PorterStemFilter;
 import com.opencsv.CSVReader;
 import com.opencsv.exceptions.CsvException;
 
+import org.example.AirlineBSTImpl;
 import org.example.ds.arraylist.AirlineArrayListImpl;
 import org.example.model.AirlineReview;
 import org.example.util.Pair;
+import org.example.util.TextAnalysisUtils;
 import org.example.util.WordCount;
 
 /*
