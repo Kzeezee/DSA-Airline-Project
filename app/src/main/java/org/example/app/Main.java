@@ -1,10 +1,11 @@
-package org.example;
+package org.example.app;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.StringReader;
 import java.util.*;
+
 
 import org.apache.lucene.analysis.Analyzer;
 import org.apache.lucene.analysis.TokenStream;
@@ -16,6 +17,11 @@ import org.apache.lucene.analysis.en.PorterStemFilter;
 
 import com.opencsv.CSVReader;
 import com.opencsv.exceptions.CsvException;
+
+import org.example.ds.arraylist.AirlineArrayListImpl;
+import org.example.model.AirlineReview;
+import org.example.util.Pair;
+import org.example.util.WordCount;
 
 /*
  * Helping indexes in CSV
@@ -29,6 +35,19 @@ public class Main {
     public static Set<String> uselessWord = Set.of("i", "you", "we", "my", "were", "have", "had"
         ,"us","our","so","from"
     );
+    public static void arrayListImplementationTest(HashMap<String, List<AirlineReview>> airlineReviews, String airline) {
+        AirlineArrayListImpl airlineArrayListImpl = new AirlineArrayListImpl(airlineReviews, airline);
+        Pair<List<WordCount>, List<WordCount>> top10MostCommonWords = airlineArrayListImpl.getTop10MostCommonWords();
+        System.out.println("Top 10 most common words in good reviews: ");
+        for (WordCount wc : top10MostCommonWords.getLeft()) {
+            System.out.println(wc);
+        }
+        System.out.println("Top 10 most common words in bad reviews: ");
+        for (WordCount wc : top10MostCommonWords.getRight()) {
+            System.out.println(wc);
+        }
+    }
+
     public static void main(String[] args) throws IOException {
         List<String[]> records = new ArrayList<>();
 
@@ -122,5 +141,15 @@ public class Main {
         for (Map.Entry<String, List<AirlineReview>> ar : airlineReviews.entrySet()) {
             MapImpl.topFreqWithHashMap(ar.getKey(), ar.getValue());
         }
+        // Now we have a hashmap of all tokenized airlinereviews class belonging to a specific airline
+        for (String airline : airlineReviews.keySet()) {
+            System.out.println("--------------------------------");
+            System.out.println("Airline: " + airline);
+        }
+
+        // ArrayList implementation test
+        System.out.println("ArrayList implementation test");
+        arrayListImplementationTest(airlineReviews, "spirit-airlines");
     }
+
 }
