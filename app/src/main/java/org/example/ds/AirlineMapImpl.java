@@ -25,7 +25,6 @@ public class AirlineMapImpl implements WordFrequencyAnalyzer {
 
     // Same logic as MapImplementationTest, reformatted to match other implementations
     public Pair<List<WordCount>, List<WordCount>> getTop10MostCommonWords() {
-        Long startTime = Instant.now().toEpochMilli();
         HashMap<String, Integer> freqGood = new HashMap<>();
         HashMap<String, Integer> freqBad = new HashMap<>();
         Integer badReviews = 0, goodReviews = 0;
@@ -53,10 +52,6 @@ public class AirlineMapImpl implements WordFrequencyAnalyzer {
         // Convert to WordCount lists (format parity with other implementations)
         List<WordCount> goodList = topKFromMap(freqGood, goodReviews, 10);
         List<WordCount> badList = topKFromMap(freqBad, badReviews, 10);
-
-        Long timeTakenInMilli = Instant.now().toEpochMilli() - startTime;
-        System.out.println("Freq Hash Map time taken: " + timeTakenInMilli);
-        System.out.println("Freq Hash Map key-value pairs number: " + freqGood.size());
 
         return Pair.of(goodList, badList);
     }
