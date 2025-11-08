@@ -4,50 +4,22 @@ This repository contains an educational project that analyzes airline review tex
 
 ## What this project does
 
-  - Binary Search Tree (BST) implementation (`AirlineBSTImpl`) — keeps a BST of unique words and counts occurrences on insert.
-  - Red-Black Tree (RBT) implementation (`AirlineRBTreeImpl`) — a self-balancing BST with color-based rotations to guarantee O(log N) operations.
-  - ArrayList-based implementation (`AirlineArrayListImpl`) — accumulates tokens then compresses sorted runs to counts.
-  - Map/HashMap implementation (`AirlineMapImpl`) — classic word -> count HashMap counting.
+  - Binary Search Tree (BST) implementation (`AirlineBSTImpl`) - keeps a BST of unique words and counts occurrences on insert.
+  - Red-Black Tree (RBT) implementation (`AirlineRBTreeImpl`) - a self-balancing BST with color-based rotations to guarantee O(log N) operations.
+  - ArrayList-based implementation (`AirlineArrayListImpl`) - accumulates tokens then compresses sorted runs to counts.
+  - Map implementation (`AirlineMapImpl`) - count frequency of word with hash map and acquire top 10.
 
 ## Project structure (high level)
 
   - `AirlineBSTImpl.java` — Binary Search Tree version
   - `AirlineRBTreeImpl.java` — Red-Black Tree (self-balancing) version
   - `AirlineArrayListImpl.java` — ArrayList-based version
-  - `AirlineMapImpl.java` — Map / HashMap-based version
+  - `AirlineMapImpl.java` — Map-based version
   - `WordFrequencyAnalyzer.java` — simple interface implemented by each approach
   - `AirlineReview.java` — review container (airline, tokenized review, rating, recommended)
   - `WordCount.java` — wrapper: word + count + total for percent computations
   - `Pair.java` — simple left/right pair returned by analyzers
   - `TextAnalysisUtils.java` — helpers for compressing counts, filtering near-common dominant words, and top-K helpers
-
-## Implementation notes (how counting is performed)
-
-  - Stores each unique token in a BST node with `count` field.
-  - On insert: traverse tree, if token == node.word then `node.count++` else create node with `count = 1` and insert into BST.
-  - After building the tree for positive/negative sets, each tree provides a `topK` method that traverses in-order and uses a min-heap (size K) to compute top-K without materializing the entire list.
-
-  - Same logical counting approach as BST (each node stores a count).
-  - New words create `RBNode` with `count = 1`; subsequent occurrences find the node and increment `count`.
-  - On insertion of a new node the tree performs standard RBT balancing (recolor and rotations) to guarantee O(log N) depth.
-  - Also supports a `topK` method that does an in-order traversal and maintains a min-heap of size K to select top tokens.
-
-  ### Red-Black Tree complexity (short)
-
-  - Insert / lookup (per token): O(log M) comparisons in the tree, where M is number of distinct tokens. Each string comparison costs O(L) where L is token length, so cost ≈ O(L · log M).
-  - Building from T tokens: O(T · log M).
-  - Top-K selection (in-order + size-K min-heap): O(M · log K) (for small K this is ≈ O(M)).
-  - Space: O(M) nodes + O(K) heap extra; recursion stack O(log M).
-
-  - Accumulates tokens into lists for positive/negative reviews.
-  - Sorts the list then compresses runs of identical tokens into `WordCount` entries (word + run length).
-  - Sorts the counts by frequency and returns the top-K.
-
-  - Uses `HashMap<String, Integer>` to increment counts in O(1) average time: `map.put(word, map.getOrDefault(word, 0) + 1)`.
-  - Converts the map to a TreeMap keyed by frequency (descending) to produce stable top-K results.
-
-  - `TextAnalysisUtils` contains helper methods used by implementations for compressing counts, filtering tokens that are frequent in both positive and negative sets (near-common dominant filtering), and selecting top-K elements.
-  - The analyzers and the interactive tool use `WordCount` objects so outputs have a consistent format.
 
 ## How to run
 
