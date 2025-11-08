@@ -8,7 +8,7 @@ This repository contains an educational project that analyzes airline review tex
 - [What this project does](#what-this-project-does)
 - [Project structure (high level)](#project-structure-high-level)
 - [Implementation notes (how counting is performed)](#implementation-notes-how-counting-is-performed)
-- [How to run](## how-to-run)
+- [How to run](#how-to-run)
 - [Example output (truncated)](#example-output-truncated)
 - [Interactive Comparison (detailed)](#interactive-comparison-detailed)
 
