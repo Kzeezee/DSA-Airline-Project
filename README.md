@@ -66,20 +66,22 @@ PowerShell (or Git Bash / WSL):
 ```
 
 What the run does:
+  - Loads and tokenizes the dataset from `app/src/main/resources/airline.csv` (stemming + stop word removal).
+  - Runs all four analyzers (BST, Red-Black Tree, ArrayList, Map) on the same airline and prints:
+    - Time (median of 5) and Allocated (median KB) for `getTop10MostCommonWords()`.
+    - Top 10 tokens for positive (GOOD) and negative (BAD) reviews in a consistent format.
+  - Prompts to launch the interactive token comparison CLI.
 
 ## Example output (truncated)
 
 ```
+[BST] Time (median of 5): 23 ms | Allocated (median): 330 KB
 [GOOD] Top 10 most common words in POSITIVE reviews:
  1. Word: about          Count: 136
  ...
 [BAD] Top 10 most common words in NEGATIVE reviews:
  1. Word: hour           Count: 679
  ...
-Overall Sentiment Analysis
-Total Reviews: 990
-Positive Reviews: 204 (20.6%)
-Negative Reviews: 786 (79.4%)
 ```
 
 ## Interactive Comparison (detailed)
@@ -149,3 +151,16 @@ Rank  Airline                     Reviews   Count   Percent   Score
 
 5. Improve interactive mapping
   - Expand `STEM_TO_WORD` and add a small JSON mapping file to make the interactive UI more readable and easier to maintain.
+
+## Timing and memory reporting
+
+- Each analyzer is run via a unified harness in `Main.runAnalyzer(title, analyzer)`.
+- Measurements:
+  - Time: wall-clock time around `getTop10MostCommonWords()`; we perform 1 warm-up call, then 5 measured runs and report the median in milliseconds.
+  - Memory (Allocated KB): total bytes allocated by the current thread during the call, captured via `ThreadMXBean.getThreadAllocatedBytes(...)` when supported, then converted to KB and reported as the median across runs.
+- Why “Allocated KB” instead of retained heap:
+  - Retained heap deltas after GC are typically tiny and dominated by the small result object, so they don’t reflect actual memory usage during computation.
+  - Allocated bytes include temporary objects created and discarded during the algorithm and are therefore more representative of memory usage while running.
+- Notes:
+  - Allocation tracking requires a JVM that supports per-thread allocated bytes (most modern HotSpot builds do).
+  - Results are best interpreted relatively (comparing implementations and dataset sizes). Actual numbers vary by machine/JVM.
