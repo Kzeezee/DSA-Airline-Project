@@ -30,15 +30,15 @@ The **Airline Sentiment Analysis** project offers a comprehensive implementation
 
 ## Project structure (high level)
 
-  - `AirlineBSTImpl.java` — Binary Search Tree version
-  - `AirlineRBTreeImpl.java` — Red-Black Tree (self-balancing) version
-  - `AirlineArrayListImpl.java` — ArrayList-based version
-  - `AirlineMapImpl.java` — Map-based version
-  - `WordFrequencyAnalyzer.java` — simple interface implemented by each approach
-  - `AirlineReview.java` — review container (airline, tokenized review, rating, recommended)
-  - `WordCount.java` — wrapper: word + count + total for percent computations
-  - `Pair.java` — simple left/right pair returned by analyzers
-  - `TextAnalysisUtils.java` — helpers for compressing counts, filtering near-common dominant words, and top-K helpers
+  - `AirlineBSTImpl.java` - Binary Search Tree version
+  - `AirlineRBTreeImpl.java` - Red-Black Tree (self-balancing) version
+  - `AirlineArrayListImpl.java` - ArrayList-based version
+  - `AirlineMapImpl.java` - Map-based version
+  - `WordFrequencyAnalyzer.java` - simple interface implemented by each approach
+  - `AirlineReview.java` - review container (airline, tokenized review, rating, recommended)
+  - `WordCount.java` - wrapper: word + count + total for percent computations
+  - `Pair.java` - simple left/right pair returned by analyzers
+  - `TextAnalysisUtils.java` - helpers for compressing counts, filtering near-common dominant words, and top-K helpers
 
 ## How to run
 
@@ -85,8 +85,8 @@ The project includes an interactive CLI to compare how a specific token (word st
 
 Flow and prompts:
 
-- Prompt 1: "Would you like to compare airlines based on a specific word? (yes/no)" — answer `yes` to continue, `no` to skip and exit.
-- Prompt 2: "Compare based on: 1. Positive reviews (good words) 2. Negative reviews (bad words)" — enter `1` or `2`.
+- Prompt 1: "Would you like to compare airlines based on a specific word? (yes/no)" - answer `yes` to continue, `no` to skip and exit.
+- Prompt 2: "Compare based on: 1. Positive reviews (good words) 2. Negative reviews (bad words)" - enter `1` or `2`.
 - The program computes the top ~20 most common tokens for the chosen sentiment across the entire dataset, excluding a small set of uninformative stems.
 - It prints the tokens (mapped to more readable words when available) and asks you to type the word you want to compare.
 
@@ -99,10 +99,10 @@ What the comparison computes:
 
 Important constants and behaviors:
 
-- `EXCLUDED_COMPARISON_WORDS` — a small, hard-coded set of stems to ignore when presenting token choices.
-- `STEM_TO_WORD` — a fixed mapping from stems to readable words (used for presentation and to accept readable input from the user).
-- `MIN_REVIEWS = 50` — reliability threshold; below this, results are penalized.
-- CLI uses `Scanner` for input; running in non-interactive environments will block the process — answer `no` to skip the interactive step or comment out the call in `Main.java`.
+- `EXCLUDED_COMPARISON_WORDS` - a small, hard-coded set of stems to ignore when presenting token choices.
+- `STEM_TO_WORD` - a fixed mapping from stems to readable words (used for presentation and to accept readable input from the user).
+- `MIN_REVIEWS = 50` - reliability threshold; below this, results are penalized.
+- CLI uses `Scanner` for input; running in non-interactive environments will block the process - answer `no` to skip the interactive step or comment out the call in `Main.java`.
 
 Example (mock) interaction:
 
