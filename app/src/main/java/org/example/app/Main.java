@@ -6,6 +6,8 @@ import java.io.StringReader;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.*;
+import java.lang.management.ManagementFactory;
+import com.sun.management.ThreadMXBean;
 
 import org.apache.lucene.analysis.Analyzer;
 import org.apache.lucene.analysis.TokenStream;
@@ -70,17 +72,62 @@ public class Main {
         System.out.println("      " + title + " Implementation Test");
         System.out.println("========================================");
 
-        Runtime rt = Runtime.getRuntime();
-        rt.gc();
-        long beforeUsed = rt.totalMemory() - rt.freeMemory();
-        long startNs = System.nanoTime();
-        Pair<List<WordCount>, List<WordCount>> top10 = analyzer.getTop10MostCommonWords();
-        long endNs = System.nanoTime();
-        rt.gc();
-        long afterUsed = rt.totalMemory() - rt.freeMemory();
-        long timeMs = (endNs - startNs) / 1_000_000;
-        long memKB = Math.max(0, afterUsed - beforeUsed) / 1024;
-        System.out.printf("Time: %d ms | Memory: %d KB%n", timeMs, memKB);
+        // Warm-up (JIT, caches)
+        try {
+            analyzer.getTop10MostCommonWords();
+        } catch (Exception ignore) {}
+
+        final int runs = 5;
+        long[] timesMs = new long[runs];
+        long[] allocatedBytes = new long[runs];
+        ThreadMXBean tmb = null;
+        try {
+            java.lang.management.ThreadMXBean base = ManagementFactory.getThreadMXBean();
+            if (base instanceof ThreadMXBean) {
+                tmb = (ThreadMXBean) base;
+                if (tmb.isThreadAllocatedMemorySupported() && !tmb.isThreadAllocatedMemoryEnabled()) {
+                    tmb.setThreadAllocatedMemoryEnabled(true);
+                }
+            }
+        } catch (Throwable ignore) {}
+
+        Pair<List<WordCount>, List<WordCount>> top10 = null;
+        for (int r = 0; r < runs; r++) {
+            System.gc();
+            try { Thread.sleep(50); } catch (InterruptedException ie) { Thread.currentThread().interrupt(); }
+
+            long beforeAlloc = -1L;
+            long tid = Thread.currentThread().getId();
+            if (tmb != null && tmb.isThreadAllocatedMemorySupported() && tmb.isThreadAllocatedMemoryEnabled()) {
+                beforeAlloc = tmb.getThreadAllocatedBytes(tid);
+            }
+            long startNs = System.nanoTime();
+
+            top10 = analyzer.getTop10MostCommonWords();
+
+            long endNs = System.nanoTime();
+            System.gc();
+            try { Thread.sleep(50); } catch (InterruptedException ie) { Thread.currentThread().interrupt(); }
+
+            timesMs[r] = (endNs - startNs) / 1_000_000;
+            if (beforeAlloc >= 0) {
+                long afterAlloc = tmb.getThreadAllocatedBytes(tid);
+                allocatedBytes[r] = Math.max(0, afterAlloc - beforeAlloc);
+            } else {
+                allocatedBytes[r] = -1L; // unsupported
+            }
+        }
+
+        Arrays.sort(timesMs);
+        Arrays.sort(allocatedBytes);
+        long medianTime = timesMs[runs / 2];
+        long medianAlloc = allocatedBytes[runs / 2];
+        if (medianAlloc >= 0) {
+            long medianAllocKB = medianAlloc / 1024;
+            System.out.printf("Time (median of %d): %d ms | Allocated (median): %d KB%n", runs, medianTime, medianAllocKB);
+        } else {
+            System.out.printf("Time (median of %d): %d ms | Allocated (median): unsupported on this JVM%n", runs, medianTime);
+        }
 
         System.out.println("\n[GOOD] Top 10 most common words in POSITIVE reviews:");
         System.out.println("-----------------------------------------");
