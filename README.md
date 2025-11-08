@@ -1,6 +1,23 @@
-# DSA-Airline-Project
+# DSA-Airline Project 
+# ✈️ Reimagine Sentiment Analysis for Airline Reviews Insights
+![license](https://img.shields.io/badge/license-MIT-2ea44f)
+![java](https://img.shields.io/badge/java-17%2B-007396?logo=openjdk&logoColor=white)
+![python](https://img.shields.io/badge/python-3.x-3776AB?logo=python&logoColor=white)
+![last commit](https://img.shields.io/badge/last%20commit-november%202025-gold)
+
 
 This repository contains an educational project that analyzes airline review text data and demonstrates multiple data-structure approaches to compute the top-k most common tokens in positive and negative reviews.
+
+---
+
+## Table of Contents
+- [What this project does](#what-this-project-does)
+- [Project structure (high level)](#project-structure-high-level)
+- [How to run](#how-to-run)
+- [Example output (truncated)](#example-output-truncated)
+- [Interactive Comparison (detailed)](#interactive-comparison-detailed)
+
+---
 
 ## What this project does
 
@@ -8,6 +25,8 @@ This repository contains an educational project that analyzes airline review tex
   - Red-Black Tree (RBT) implementation (`AirlineRBTreeImpl`) - a self-balancing BST with color-based rotations to guarantee O(log N) operations.
   - ArrayList-based implementation (`AirlineArrayListImpl`) - accumulates tokens then compresses sorted runs to counts.
   - Map implementation (`AirlineMapImpl`) - count frequency of word with hash map and acquire top 10.
+
+---
 
 ## Project structure (high level)
 
@@ -44,6 +63,8 @@ What the run does:
     - Top 10 tokens for positive (GOOD) and negative (BAD) reviews in a consistent format.
   - Prompts to launch the interactive token comparison CLI.
 
+---
+
 ## Example output (truncated)
 
 ```
@@ -55,6 +76,8 @@ What the run does:
  1. Word: hour           Count: 679
  ...
 ```
+
+---
 
 ## Interactive Comparison (detailed)
 
