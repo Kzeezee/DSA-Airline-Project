@@ -70,7 +70,17 @@ public class Main {
         System.out.println("      " + title + " Implementation Test");
         System.out.println("========================================");
 
+        Runtime rt = Runtime.getRuntime();
+        rt.gc();
+        long beforeUsed = rt.totalMemory() - rt.freeMemory();
+        long startNs = System.nanoTime();
         Pair<List<WordCount>, List<WordCount>> top10 = analyzer.getTop10MostCommonWords();
+        long endNs = System.nanoTime();
+        rt.gc();
+        long afterUsed = rt.totalMemory() - rt.freeMemory();
+        long timeMs = (endNs - startNs) / 1_000_000;
+        long memKB = Math.max(0, afterUsed - beforeUsed) / 1024;
+        System.out.printf("Time: %d ms | Memory: %d KB%n", timeMs, memKB);
 
         System.out.println("\n[GOOD] Top 10 most common words in POSITIVE reviews:");
         System.out.println("-----------------------------------------");
