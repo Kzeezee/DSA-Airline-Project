@@ -131,36 +131,3 @@ Rank  Airline                     Reviews   Count   Percent   Score
 2     Airline B                    3,400     540     15.88%   24.30
 3     Airline C                      40      18     45.00%    4.32 *
 ```
-
-## Notes and recommendations
-
-  - Merge `master` into your feature branch first, resolve conflicts there, run tests and `gradlew run` until green, then merge your branch into `master` (squash merge recommended for a single feature commit).
-
-## Next steps (practical)
-1. Add unit tests for parity
-  - Create a small, deterministic CSV (10–50 reviews) and write JUnit tests that run each implementation and assert that the top-K outputs are consistent.
-
-2. Headless / CI-friendly run mode
-  - Add command-line flags to `Main` (or environment variable) to skip the interactive comparison and to select which implementations to run.
-
-3. Benchmarks
-  - Add a micro-benchmark that measures wall-clock time and memory for each implementation over increasing dataset sizes; output CSV for plotting.
-
-4. Automated sample runs
-  - Add a script `scripts/run_all.sh` (or `.bat` for Windows) that runs `gradlew run` in headless mode with different dataset variants and stores outputs under `benchmarks/`.
-
-5. Improve interactive mapping
-  - Expand `STEM_TO_WORD` and add a small JSON mapping file to make the interactive UI more readable and easier to maintain.
-
-## Timing and memory reporting
-
-- Each analyzer is run via a unified harness in `Main.runAnalyzer(title, analyzer)`.
-- Measurements:
-  - Time: wall-clock time around `getTop10MostCommonWords()`; we perform 1 warm-up call, then 5 measured runs and report the median in milliseconds.
-  - Memory (Allocated KB): total bytes allocated by the current thread during the call, captured via `ThreadMXBean.getThreadAllocatedBytes(...)` when supported, then converted to KB and reported as the median across runs.
-- Why “Allocated KB” instead of retained heap:
-  - Retained heap deltas after GC are typically tiny and dominated by the small result object, so they don’t reflect actual memory usage during computation.
-  - Allocated bytes include temporary objects created and discarded during the algorithm and are therefore more representative of memory usage while running.
-- Notes:
-  - Allocation tracking requires a JVM that supports per-thread allocated bytes (most modern HotSpot builds do).
-  - Results are best interpreted relatively (comparing implementations and dataset sizes). Actual numbers vary by machine/JVM.
