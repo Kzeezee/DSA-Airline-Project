@@ -1,7 +1,8 @@
-package org.example.app;
+package dsa.airline.app;
 
 import java.util.*;
-import org.example.model.AirlineReview;
+
+import dsa.airline.model.AirlineReview;
 
 public class InteractiveComparison {
 

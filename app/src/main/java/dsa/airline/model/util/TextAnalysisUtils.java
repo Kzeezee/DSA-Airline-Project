@@ -1,11 +1,11 @@
-package org.example.model.util;
+package dsa.airline.model.util;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
-import org.example.model.AirlineReview;
+import dsa.airline.model.AirlineReview;
 
 public class TextAnalysisUtils {
     public static boolean isPositiveRecommendation(String recommended) {

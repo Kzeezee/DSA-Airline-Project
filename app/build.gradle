@@ -37,7 +37,7 @@ java {
 
 application {
     // Define the main class for the application.
-    mainClass = 'org.example.app.Main'
+    mainClass = 'dsa.airline.app.Main'
 }
 
 // Enable standard input for the run task

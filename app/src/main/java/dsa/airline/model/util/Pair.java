@@ -1,4 +1,4 @@
-package org.example.model.util;
+package dsa.airline.model.util;
 
 public class Pair<L, R> {
     private final L left;

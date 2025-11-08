@@ -1,14 +1,14 @@
-package org.example.ds;
+package dsa.airline.ds;
 
 import java.util.List;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.PriorityQueue;
 
-import org.example.model.AirlineReview;
-import org.example.model.util.Pair;
-import org.example.model.util.TextAnalysisUtils;
-import org.example.model.util.WordCount;
+import dsa.airline.model.AirlineReview;
+import dsa.airline.model.util.Pair;
+import dsa.airline.model.util.TextAnalysisUtils;
+import dsa.airline.model.util.WordCount;
 
 public class AirlineRBTreeImpl implements WordFrequencyAnalyzer {
     private HashMap<String, List<AirlineReview>> airlineReviews;

@@ -1,4 +1,4 @@
-package org.example.model.util;
+package dsa.airline.model.util;
 
 public class WordCount {
     private final String word;

@@ -1,4 +1,4 @@
-package org.example.ds;
+package dsa.airline.ds;
 
 import java.time.Instant;
 import java.util.ArrayList;
@@ -10,9 +10,9 @@ import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
 
-import org.example.model.AirlineReview;
-import org.example.model.util.Pair;
-import org.example.model.util.WordCount;
+import dsa.airline.model.AirlineReview;
+import dsa.airline.model.util.Pair;
+import dsa.airline.model.util.WordCount;
 
 public class AirlineMapImpl implements WordFrequencyAnalyzer {
     private Map<String, List<AirlineReview>> airlineReviews;

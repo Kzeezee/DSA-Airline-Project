@@ -1,4 +1,4 @@
-package org.example.app;
+package dsa.airline.app;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -9,21 +9,21 @@ import java.util.*;
 import java.lang.management.ManagementFactory;
 import com.sun.management.ThreadMXBean;
 
+import dsa.airline.ds.AirlineArrayListImpl;
+import dsa.airline.ds.AirlineBSTImpl;
+import dsa.airline.ds.AirlineMapImpl;
+import dsa.airline.ds.AirlineRBTreeImpl;
+import dsa.airline.ds.WordFrequencyAnalyzer;
+import dsa.airline.model.AirlineReview;
+import dsa.airline.model.util.Pair;
+import dsa.airline.model.util.WordCount;
+
 import org.apache.lucene.analysis.Analyzer;
 import org.apache.lucene.analysis.TokenStream;
 import org.apache.lucene.analysis.en.EnglishAnalyzer;
 import org.apache.lucene.analysis.standard.StandardAnalyzer;
 import org.apache.lucene.analysis.tokenattributes.CharTermAttribute;
 import org.apache.lucene.analysis.en.PorterStemFilter;
-
-import org.example.ds.AirlineArrayListImpl;
-import org.example.ds.AirlineBSTImpl;
-import org.example.ds.AirlineRBTreeImpl;
-import org.example.ds.AirlineMapImpl;
-import org.example.ds.WordFrequencyAnalyzer;
-import org.example.model.AirlineReview;
-import org.example.model.util.Pair;
-import org.example.model.util.WordCount;
 
 /*
  * Combined Implementation - Shows both BST and Priority Queue approaches

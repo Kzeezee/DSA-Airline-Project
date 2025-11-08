@@ -1,4 +1,4 @@
-package org.example.model;
+package dsa.airline.model;
 import java.util.Arrays;
 
 public class AirlineReview {
