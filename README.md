@@ -1,8 +1,7 @@
 # ✈️ Reimagine Sentiment Analysis for Airline Reviews Insights
-[![License](https://img.shields.io/github/license/USER/REPO)](LICENSE)
-![Java](https://img.shields.io/badge/java-17+-red?logo=openjdk&logoColor=white)
-![Build](https://img.shields.io/github/actions/workflow/status/USER/REPO/ci.yml?label=build)
-![Last commit](https://img.shields.io/github/last-commit/USER/REPO?color=gold)
+![license](https://img.shields.io/badge/license-MIT-2ea44f)
+![java](https://img.shields.io/badge/java-17%2B-007396?logo=openjdk&logoColor=white)
+![last commit](https://img.shields.io/badge/last%20commit-december%202024-gold)
 
 
 This repository contains an educational project that analyzes airline review text data and demonstrates multiple data-structure approaches to compute the top-k most common tokens in positive and negative reviews.
