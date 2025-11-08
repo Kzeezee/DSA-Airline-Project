@@ -6,7 +6,7 @@
 ![last commit](https://img.shields.io/badge/last%20commit-november%202025-gold)
 
 
-This repository contains an educational project that analyzes airline review text data and demonstrates multiple data-structure approaches to compute the top-k most common tokens in positive and negative reviews.
+The **Airline Sentiment Analysis** project offers a comprehensive implementation of airline-review text analysis, implementing multiple data-structure to compute the top-K most common tokens across positive and negative reviews.
 
 ---
 
