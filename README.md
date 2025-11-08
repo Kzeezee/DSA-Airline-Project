@@ -1,6 +1,7 @@
 # ✈️ Reimagine Sentiment Analysis for Airline Reviews Insights
 ![license](https://img.shields.io/badge/license-MIT-2ea44f)
 ![java](https://img.shields.io/badge/java-17%2B-007396?logo=openjdk&logoColor=white)
+![python](https://img.shields.io/badge/python-3.x-3776AB?logo=python&logoColor=white)
 ![last commit](https://img.shields.io/badge/last%20commit-november%202025-gold)
 
 
@@ -20,7 +21,7 @@ This repository contains an educational project that analyzes airline review tex
 
 ## What this project does
 
-  - Binary Search Tree (BST) implementation (`AirlineBSTImpl`) — keeps a BST of unique words and counts occurrences on insert.
+  - Binary Search Tree (BST) implementation (`AirlineBSTImpl`): keeps a BST of unique words and counts occurrences on insert.
   - Red-Black Tree (RBT) implementation (`AirlineRBTreeImpl`) — a self-balancing BST with color-based rotations to guarantee O(log N) operations.
   - ArrayList-based implementation (`AirlineArrayListImpl`) — accumulates tokens then compresses sorted runs to counts.
   - Map/HashMap implementation (`AirlineMapImpl`) — classic word -> count HashMap counting.
