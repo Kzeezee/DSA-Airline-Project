@@ -2,12 +2,26 @@
 
 This repository contains an educational project that analyzes airline review text data and demonstrates multiple data-structure approaches to compute the top-k most common tokens in positive and negative reviews.
 
+---
+
+## Table of Contents
+- [What this project does](#what-this-project-does)
+- [Project structure (high level)](#project-structure-high-level)
+- [Implementation notes (how counting is performed)](#implementation-notes-how-counting-is-performed)
+- [How to run](## how-to-run)
+- [Example output (truncated)](#example-output-truncated)
+- [Interactive Comparison (detailed)](#interactive-comparison-detailed)
+
+---
+
 ## What this project does
 
   - Binary Search Tree (BST) implementation (`AirlineBSTImpl`) — keeps a BST of unique words and counts occurrences on insert.
   - Red-Black Tree (RBT) implementation (`AirlineRBTreeImpl`) — a self-balancing BST with color-based rotations to guarantee O(log N) operations.
   - ArrayList-based implementation (`AirlineArrayListImpl`) — accumulates tokens then compresses sorted runs to counts.
   - Map/HashMap implementation (`AirlineMapImpl`) — classic word -> count HashMap counting.
+
+---
 
 ## Project structure (high level)
 
@@ -20,6 +34,8 @@ This repository contains an educational project that analyzes airline review tex
   - `WordCount.java` — wrapper: word + count + total for percent computations
   - `Pair.java` — simple left/right pair returned by analyzers
   - `TextAnalysisUtils.java` — helpers for compressing counts, filtering near-common dominant words, and top-K helpers
+
+---
 
 ## Implementation notes (how counting is performed)
 
@@ -49,6 +65,8 @@ This repository contains an educational project that analyzes airline review tex
   - `TextAnalysisUtils` contains helper methods used by implementations for compressing counts, filtering tokens that are frequent in both positive and negative sets (near-common dominant filtering), and selecting top-K elements.
   - The analyzers and the interactive tool use `WordCount` objects so outputs have a consistent format.
 
+---
+
 ## How to run
 
 Open a terminal in the project root (Windows cmd / PowerShell) and run the Gradle wrapper. Use the commands below depending on your shell:
@@ -72,6 +90,8 @@ What the run does:
     - Top 10 tokens for positive (GOOD) and negative (BAD) reviews in a consistent format.
   - Prompts to launch the interactive token comparison CLI.
 
+---
+
 ## Example output (truncated)
 
 ```
@@ -83,6 +103,8 @@ What the run does:
  1. Word: hour           Count: 679
  ...
 ```
+
+---
 
 ## Interactive Comparison (detailed)
 
