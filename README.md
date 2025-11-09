@@ -27,6 +27,7 @@ For detailed methodology, findings, and comprehensive analysis, please see the f
   - Red-Black Tree (RBT) implementation (`AirlineRBTreeImpl`) - a self-balancing BST with color-based rotations to guarantee O(log N) operations.
   - ArrayList-based implementation (`AirlineArrayListImpl`) - accumulates tokens then compresses sorted runs to counts.
   - Map implementation (`AirlineMapImpl`) - count frequency of word with hash map and acquire top 10.
+  - AVL Tree implementation (AirlineAVLImpl) - self-balancing BST (|bf| ≤ 1) with LL/RR/LR/RL rotations; O(log N) search/insert; stores unique words and increments counts.
 
 ---
 
