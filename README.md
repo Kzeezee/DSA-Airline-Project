@@ -52,7 +52,7 @@ gradlew.bat run
 PowerShell (or Git Bash / WSL):
 
 ```powershell
-./gradlew run
+.\gradlew run
 ```
 
 What the run does:
