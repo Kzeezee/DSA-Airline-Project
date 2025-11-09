@@ -4,6 +4,9 @@
 ![python](https://img.shields.io/badge/python-3.x-3776AB?logo=python&logoColor=white)
 ![last commit](https://img.shields.io/badge/last%20commit-november%202025-gold)
 
+For detailed methodology, findings, and comprehensive analysis, please see the full report:
+
+📥 [See Complete Report (PDF)](./Presentation%20Slide.pdf)
 
 The **Airline Sentiment Analysis** project offers a comprehensive implementation of airline-review text analysis, implementing multiple data-structure to compute the top-K most common tokens across positive and negative reviews.
 
