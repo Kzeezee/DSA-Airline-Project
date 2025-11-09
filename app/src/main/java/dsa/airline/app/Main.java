@@ -26,10 +26,19 @@ import org.apache.lucene.analysis.standard.StandardAnalyzer;
 import org.apache.lucene.analysis.tokenattributes.CharTermAttribute;
 import org.apache.lucene.analysis.en.PorterStemFilter;
 
+
+/*
+ * Memory-safe streaming version
+ * CSV columns:
+ * 0: Airline, 6: Review text, 11: Overall rating, 19: Recommended
+ */
+
 public class Main {
     public static Set<String> uselessWord = Set.of(
             "i", "you", "we", "my", "were", "have", "had", "us", "our", "so", "from");
 
+
+    // Parse a single logical CSV line with quotes/commas
     private static String[] parseCSVLine(String line) {
         List<String> result = new ArrayList<>();
         boolean inQuotes = false;
@@ -55,6 +64,10 @@ public class Main {
         return result.toArray(new String[0]);
     }
 
+    /**
+     * Runs a single analyzer: warms up, measures median time (ms) and allocated memory (KB),
+     * then prints the top-10 good/bad words in a unified format.
+     */
     private static void runAnalyzer(String title, WordFrequencyAnalyzer analyzer) {
         System.out.println("\n========================================");
         System.out.println("      " + title + " Implementation Test");
@@ -146,9 +159,11 @@ public class Main {
 
         HashMap<String, List<AirlineReview>> airlineReviews = new HashMap<>();
 
+        // Optional: dev cap (use -Drow.limit=200000)
         final int limit = Integer.getInteger("row.limit", 0);
         int seen = 0;
 
+        // Load from resources
         try (InputStream csvStream = Main.class.getClassLoader().getResourceAsStream("airline.csv")) {
             if (csvStream == null) {
                 System.out.println("ERROR: Could not find airline.csv in resources folder!");
@@ -159,6 +174,7 @@ public class Main {
             try (BufferedReader br = new BufferedReader(new InputStreamReader(csvStream));
                     Analyzer analyzer = new StandardAnalyzer(EnglishAnalyzer.getDefaultStopSet())) {
 
+                // Skip header
                 String line = br.readLine();
 
                 StringBuilder currentLine = new StringBuilder(4096);
