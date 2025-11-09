@@ -201,7 +201,7 @@ public class Main {
                         continue;
                     // Removed airline filter to load ALL airlines for interactive comparison
                     // if (!testAirline.equals(airline))
-                    //     continue; // memory saver for now
+                    // continue; // memory saver for now
                     if (limit > 0 && ++seen > limit)
                         break;
 
@@ -235,7 +235,8 @@ public class Main {
         }
 
         // Run analyzers on spirit-airlines only (for performance demonstration)
-        // Note: airlineReviews contains ALL airlines, but we analyze just one for the top-10 demo
+        // Note: airlineReviews contains ALL airlines, but we analyze just one for the
+        // top-10 demo
         runAnalyzer("BST", new AirlineBSTImpl(airlineReviews, testAirline));
         runAnalyzer("ArrayList", new AirlineArrayListImpl(airlineReviews, testAirline));
         runAnalyzer("Red-Black Tree", new AirlineRBTreeImpl(airlineReviews, testAirline));
