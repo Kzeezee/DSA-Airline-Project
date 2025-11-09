@@ -8,7 +8,7 @@ The **Airline Sentiment Analysis** project offers a comprehensive implementation
 
 For detailed methodology, findings, and comprehensive analysis, please see the full report:
 
-📥 [See Complete Report (PDF)](./Presentation%20Slide.pdf)
+📥 [See Complete Report (PDF)](./Presentation%20Slides.pdf)
 
 ---
 
